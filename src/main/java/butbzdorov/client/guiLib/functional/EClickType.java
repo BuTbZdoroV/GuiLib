@@ -1,0 +1,13 @@
+package butbzdorov.client.guiLib.functional;
+
+public enum EClickType {
+    LEFT_MOUSE_CLICK,
+    RIGHT_MOUSE_CLICK,
+    MIDDLE_MOUSE_CLICK,
+    LEFT_MOUSE_PRESS,
+    RIGHT_MOUSE_PRESS,
+    MIDDLE_MOUSE_PRESS,
+    LEFT_MOUSE_RELEASE,
+    RIGHT_MOUSE_RELEASE,
+    MIDDLE_MOUSE_RELEASE
+}

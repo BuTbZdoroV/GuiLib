@@ -1,0 +1,100 @@
+buildscript {
+	ext {
+		version_name = "1.1.4"
+		isRelease = 'true'
+	}
+	repositories {
+		mavenCentral()
+		maven {
+			name = "github"
+			url = "https://github.com/juanmuscaria/maven/raw/master"
+		}
+		maven {
+			name = "sonatype"
+			url = "https://oss.sonatype.org/content/repositories/snapshots/"
+		}
+	}
+	dependencies {
+		classpath 'net.minecraftforge.gradle:ForgeGradle:[1.2-1.4.6-SNAPSHOT,)'
+	}
+}
+
+repositories {
+	flatDir {
+		dirs 'deps'
+	}
+	mavenCentral()
+	maven { url = "https://repo.spongepowered.org/maven" }
+}
+
+apply plugin: 'java'
+apply plugin: 'forge'
+
+group 'io.gitlab.hohserg.elegant.networking'
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+
+version = mod_version
+group = mod_group
+archivesBaseName = mod_archives_name
+
+minecraft {
+	version = "1.7.10-10.13.4.1614-1.7.10"
+	runDir = "eclipse"
+	replace "@VERSION@", project.version
+}
+
+
+dependencies {
+	compileOnly 'org.projectlombok:lombok:1.18.20'
+	annotationProcessor 'org.projectlombok:lombok:1.18.20'
+	implementation 'com.google.code.gson:gson:2.10.1'
+}
+
+configurations {
+	extraLibs { transitive = false }
+	implementation.extendsFrom extraLibs
+}
+
+processResources
+		{
+			// this will ensure that this task is redone when the versions change.
+			inputs.property "version", project.version
+			inputs.property "mcversion", project.minecraft.version
+
+			// replace stuff in mcmod.info, nothing else
+			from(sourceSets.main.resources.srcDirs) {
+				include 'mcmod.info'
+
+				// replace version and mcversion
+				expand 'version':project.version, 'mcversion':project.minecraft.version
+			}
+
+			// copy everything else, thats not the mcmod.info
+			from(sourceSets.main.resources.srcDirs) {
+				exclude 'mcmod.info'
+			}
+		}
+
+task prepareAssets(type: Copy) {
+	group = 'build'
+	from project.file('src/main/resources')
+	into project.file('build/classes/java/main') //вместо kotlin ставьте java, если вы используете ее
+}
+project.classes.dependsOn(prepareAssets)
+
+task devJar(type: Jar) {
+	classifier = 'dev'
+	from sourceSets.main.output
+}
+
+task sourcesJar(type: Jar) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+artifacts {
+	archives devJar
+	archives sourcesJar
+}
