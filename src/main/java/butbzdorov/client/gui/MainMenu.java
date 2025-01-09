@@ -7,6 +7,7 @@ import butbzdorov.client.guiLib.IDelicate;
 import butbzdorov.client.guiLib.annotation.Delicate;
 import butbzdorov.client.guiLib.delicates.Button;
 import butbzdorov.client.guiLib.delicates.Image;
+import butbzdorov.client.guiLib.delicates.Text;
 import butbzdorov.client.guiLib.utils.GuiUtils;
 import butbzdorov.client.guiLib.utils.SG;
 import butbzdorov.client.guiLib.utils.jglfontCore.JGLFont;
@@ -24,9 +25,12 @@ import org.apache.commons.logging.LogFactory;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 
+import javax.jws.Oneway;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -42,13 +46,12 @@ public class MainMenu extends Container implements IDelicate {
     JGLFont jglFont = null;
 
 
-    public MainMenu() throws IOException {
+    public MainMenu(){
         DelicateController.delicates.add(this);
         //  jglFont = factory.loadFont("assets/butbzdorov/fonts/Dimkin-Bold.ttf#size=16;glyphSide=256");
     }
 
-    CustomFontObject font1 = new CustomFontObject("TTNorms-Bold", 30);
-    CustomFontObject font2 = new CustomFontObject("TTNorms-Bold", 10);
+
 
     @Override
     public void initGui() {
@@ -61,7 +64,7 @@ public class MainMenu extends Container implements IDelicate {
         buttons.add(new Button(SG.get(236), SG.get(445), SG.get(343), SG.get(60))
                 .addImage(new ResourceLoader("butbzdorov", "gui/mainmenu/button.png"))
                 .addImage(new ResourceLoader("butbzdorov", "gui/mainmenu/playicon.png"), 0,0,SG.get(15),SG.get(20))
-                .addText("Hello WorlD", font1, 30)
+                .addText("Hello WorlD", CustomFont.TTNormsBold, 30)
                 .onHover(button -> GuiUtils.drawRectS(button.getPosX(), button.getPosY(), button.getEndX(), button.getEndY(), Color.gray, 0.4))
                 .onClickButton(button -> {
                     switch (button.clickType) {
@@ -84,7 +87,7 @@ public class MainMenu extends Container implements IDelicate {
         buttons.add(new Button(SG.get(236), SG.get(550), SG.get(343), SG.get(60))
                 .addImage(new ResourceLoader("butbzdorov", "gui/mainmenu/button.png"))
                 .addImage(new ResourceLoader("butbzdorov", "gui/mainmenu/settingsicon.png"), 0,0,SG.get(15),SG.get(20))
-                .addText("Settings", font2, 10)
+                .addText("Settings", CustomFont.TTNormsBold, 10)
                 .onHover(button -> GuiUtils.drawRectS(button.getPosX(), button.getPosY(), button.getEndX(), button.getEndY(), Color.gray, 0.4))
                 .onClickButton(button -> {
                     switch (button.clickType) {
@@ -110,9 +113,22 @@ public class MainMenu extends Container implements IDelicate {
 
     }
 
+    private String dynamicText = "Loading111...";
+    Text randomText = new Text(dynamicText, SG.screenCenterX, SG.screenCenterY);
+    private void updateDynamicText() {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastTime >= 1000) {
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+            dynamicText = "Current time: " + sdf.format(new Date());
+            lastTime = currentTime;
+        }
+    }
+
+
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
+
 /*
         GuiUtils.drawRectS(0,0, mc.displayWidth, mc.displayHeight, Color.black, 1);
         GL11.glPushMatrix();
@@ -149,5 +165,9 @@ public class MainMenu extends Container implements IDelicate {
     public void onRender() {
         image.setEndX(this.width).setEndY(this.height);
         image.onRender();
+
+        updateDynamicText();
+        randomText.setText(dynamicText);
+        randomText.onRender();
     }
 }

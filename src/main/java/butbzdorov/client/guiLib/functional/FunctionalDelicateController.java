@@ -5,6 +5,7 @@ import butbzdorov.client.guiLib.DelicateController;
 import butbzdorov.client.guiLib.IDelicate;
 import butbzdorov.client.guiLib.delicates.Button;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import org.lwjgl.input.Mouse;
 
@@ -21,6 +22,9 @@ public class FunctionalDelicateController {
 
     @SubscribeEvent
     public void onGuiRenderPost(GuiScreenEvent.DrawScreenEvent.Post event) {
+        if (!(event.gui instanceof IDelicate)) {
+            return;
+        }
         for (IDelicate delicate : DelicateController.delicates) {
             delicate.onRender();
         }

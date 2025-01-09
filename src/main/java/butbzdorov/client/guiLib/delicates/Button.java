@@ -78,8 +78,8 @@ public class Button implements IFunctionalDelicate {
         return this;
     }
 
-    public Button addText(String stringText, CustomFontObject font, float fontSize) {
-        texts.add(new Text(stringText, this.posX + this.endX/2,this.posY + this.endY/2).setCentrePosX().setCentrePosY().setFont(font, fontSize));
+    public Button addText(String stringText, CustomFont font, float fontSize) {
+        texts.add(new Text(stringText, this.posX + this.endX/2,this.posY + this.endY/2).setFont(font, fontSize).setCentrePosX().setCentrePosY());
         return this;
     }
 

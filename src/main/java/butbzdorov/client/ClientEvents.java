@@ -21,15 +21,9 @@ public class ClientEvents {
 
     private final Minecraft mc = Minecraft.getMinecraft();
 
-    public static final MainMenu mainMenu;
+    public static final MainMenu mainMenu = new MainMenu();
 
-    static {
-        try {
-            mainMenu = new MainMenu();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+
 
     @SubscribeEvent
     public void onGuiOpenEvent(GuiOpenEvent event) {

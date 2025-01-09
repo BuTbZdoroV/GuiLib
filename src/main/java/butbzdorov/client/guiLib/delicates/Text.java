@@ -6,7 +6,6 @@ import butbzdorov.client.guiLib.functional.FunctionalDelicateController;
 import butbzdorov.client.guiLib.functional.IFunctionalDelicate;
 import butbzdorov.client.guiLib.utils.SG;
 import butbzdorov.client.guiLib.utils.newCustomNPC.CustomFont;
-import butbzdorov.client.guiLib.utils.newCustomNPC.CustomFontObject;
 import butbzdorov.client.guiLib.utils.newCustomNPC.CustomFontRenderer;
 import lombok.*;
 import net.minecraft.client.Minecraft;
@@ -30,15 +29,14 @@ public class Text implements IFunctionalDelicate {
     private float height;
 
     private String text = "";
-    private float size = 1;
+    private CustomFont font = CustomFont.TTNormsBold;
     private Color color = Color.white;
     private float alpha = 1;
     private float fontSize = 20;
-    public CustomFontObject font = CustomFontObject.TTNormsMedium;
 
     private final List<TextAnimation> animations = new ArrayList<>();
 
-    public Text(String text, CustomFontObject font) {
+    public Text(String text, CustomFont font) {
         this.text = text;
         this.font = font;
         width =  CustomFontRenderer.getStringWidth(font, text);
@@ -56,26 +54,22 @@ public class Text implements IFunctionalDelicate {
         this.posX = posX;
         this.posY = posY;
 
-       // WidthAndHeightUpdate();
+        WidthAndHeightUpdate();
         FunctionalDelicateController.functionalDelicates.add(this);
     }
 
     public float getWidth() {
-       // WidthAndHeightUpdate();
         return width;
     }
     public float getHeight() {
-       // WidthAndHeightUpdate();
         return height;
     }
 
     public Text setCentrePosX() {
-       // WidthAndHeightUpdate();
         this.posX -= getWidth()/2;
         return this;
     }
     public Text setCentrePosY() {
-       // WidthAndHeightUpdate();
         this.posY -= getHeight()/2;
         return this;
     }
@@ -116,15 +110,14 @@ public class Text implements IFunctionalDelicate {
     }
 
     public void WidthAndHeightUpdate() {
-        width = CustomFontRenderer.getStringWidth(this.font, text); // Пересчитываем ширину
-        height = CustomFontRenderer.getStringHeight(this.font, text, -1); // Пересчитываем высоту
+        width = CustomFontRenderer.getStringWidth(this.font.setSize(fontSize), text); // Пересчитываем ширину
+        height = CustomFontRenderer.getStringHeight(this.font.setSize((int) fontSize), text, -1); // Пересчитываем высоту
     }
 
-    public Text setFont(CustomFontObject font, float sizeFont) {
+    public Text setFont(CustomFont font, float sizeFont) {
         this.fontSize = sizeFont;
-        WidthAndHeightUpdate();
         this.font = font;
-        System.out.println(text + " - Font set: " + font + " Size: " + sizeFont);  // Логируем
+        WidthAndHeightUpdate();
         return this;
     }
 

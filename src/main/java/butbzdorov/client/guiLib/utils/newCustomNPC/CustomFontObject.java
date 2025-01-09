@@ -30,8 +30,8 @@ public class CustomFontObject {
 		return size;
 	}
 
-	public CustomFontObject setSize(int size) {
-		this.size = size;
+	public CustomFontObject setSize(Number size) {
+		this.size = size.intValue();
 		return this;
 	}
 }
