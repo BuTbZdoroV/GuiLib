@@ -1,7 +1,7 @@
 package butbzdorov.client.guiLib.utils;
 
-import butbzdorov.client.guiLib.utils.CustomFont.CustomFont;
-import butbzdorov.client.guiLib.utils.CustomFont.CustomFontRenderer;
+import butbzdorov.client.guiLib.utils.newCustomNPC.CustomFont;
+import butbzdorov.client.guiLib.utils.newCustomNPC.CustomFontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
@@ -31,20 +31,20 @@ public class GuiUtils {
 
     public static class RenderText {
         public static <T> void drawText(double posX, double posY, int color, T text, CustomFont font) {
-            CustomFontRenderer.drawStringWithMaxWidth(String.valueOf(text), posX, posY, -1, color, font);
+            CustomFontRenderer.drawStringWithMaxWidth(String.valueOf(text), (float) posX, (float) posY, -1,  font);
         }
 
 
         public static <T> void drawCenteredText(double posX, double posY, int color, T text, CustomFont font) {
-            CustomFontRenderer.drawStringWithMaxWidth(String.valueOf(text), posX - ((double) CustomFontRenderer.getStringWidth(font, String.valueOf(text)) / 2), posY - (CustomFontRenderer.getStringHeight(font, String.valueOf(text), -1) / 2), -1,  color, font);
+            CustomFontRenderer.drawStringWithMaxWidth(String.valueOf(text), (float) (posX - ((double) CustomFontRenderer.getStringWidth(font, String.valueOf(text)) / 2)), (float) (posY - ((double) CustomFontRenderer.getStringHeight(font, String.valueOf(text), -1) / 2)), -1,   font);
         }
 
         public static <T> void drawCenteredText(double posX, double posY, int color, String text, CustomFont font) {
-            CustomFontRenderer.drawStringWithMaxWidth(text, posX - ((double) CustomFontRenderer.getStringWidth(font, String.valueOf(text)) / 2), posY - (CustomFontRenderer.getStringHeight(font, String.valueOf(text), -1) / 2), -1,  color, font);
+            CustomFontRenderer.drawStringWithMaxWidth(text, (float) (posX - ((double) CustomFontRenderer.getStringWidth(font, String.valueOf(text)) / 2)), (float) (posY - ((double) CustomFontRenderer.getStringHeight(font, String.valueOf(text), -1) / 2)), -1,  font);
         }
 
         public static <T> void drawSplitText(double posX, double posY, int wrapWidth, int color, T text, CustomFont font) {
-            CustomFontRenderer.drawStringWithMaxWidth(String.valueOf(text), posX, posY, wrapWidth, color, font);
+            CustomFontRenderer.drawStringWithMaxWidth(String.valueOf(text), (float) posX, (float) posY, wrapWidth, font);
         }
 
         public static <T> void drawTextWithAlpha(double posX, double posY, double alpha, int color, T text, CustomFont font) {
@@ -54,7 +54,7 @@ public class GuiUtils {
             glPushMatrix();
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            CustomFontRenderer.drawStringWithMaxWidth(String.valueOf(text), posX, posY, -1, color | alphaF + 22 << 24, font);
+            CustomFontRenderer.drawStringWithMaxWidth(String.valueOf(text), (float) posX, (float) posY, -1,  font);
             glDisable(GL_BLEND);
             glPopMatrix();
         }

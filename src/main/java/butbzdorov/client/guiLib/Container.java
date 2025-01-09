@@ -36,6 +36,9 @@ public class Container extends GuiScreen {
     public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_) {
         super.drawScreen(p_73863_1_, p_73863_2_, p_73863_3_);
 
+        mouseX = p_73863_2_;
+        mouseY = p_73863_1_;
+
 /*        mouseX = p_73863_1_ * width / mc.displayWidth;
         mouseY = p_73863_2_ * height / mc.displayHeight;
 

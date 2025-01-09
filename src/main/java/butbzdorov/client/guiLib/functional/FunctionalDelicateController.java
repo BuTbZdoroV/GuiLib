@@ -27,6 +27,7 @@ public class FunctionalDelicateController {
 
         for (Button button : Container.buttons) {
             button.onRender();
+            button.handleHover(event.mouseX, event.mouseY);
 
             if (button.isMouseOver(event.mouseX, event.mouseY)) {
                 handleMouseEvents(button, event);

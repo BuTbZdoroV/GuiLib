@@ -4,15 +4,15 @@ import butbzdorov.client.gui.res.ResourceLoader;
 import butbzdorov.client.guiLib.IDelicate;
 import butbzdorov.client.guiLib.annotation.Delicate;
 import butbzdorov.client.guiLib.utils.GuiUtils;
-import butbzdorov.client.guiLib.utils.SG;
 import lombok.Data;
-import net.minecraft.util.ResourceLocation;
 
 @Delicate
 @Data
 public class Image implements IDelicate {
 
     private ResourceLoader image;
+
+    private String ImageName = "NULL";
 
     private float posX = 0.0f;
     private float posY = 0.0f;
@@ -24,6 +24,7 @@ public class Image implements IDelicate {
 
     public Image(ResourceLoader image, float posX, float posY, float endX, float endY) {
         this.image = image;
+        this.ImageName = getLastWord();
         this.posX = posX;
         this.posY = posY;
         this.endX = endX;
@@ -39,14 +40,54 @@ public class Image implements IDelicate {
         this.endY = endY;
     }
 
-
-    @Override
-    public void onStartRender(float milliseconds) {
-
+    public Image setPosX(float x) {
+        this.posX = x;
+        return this;
     }
+
+    public Image setPosY(float y) {
+        this.posY = y;
+        return this;
+    }
+
+    public Image setEndX(float endX) {
+        this.endX = endX;
+        return this;
+    }
+    public Image setEndY(float endY) {
+        this.endY = endY;
+        return this;
+    }
+
+    public Image setPlacePosX(float x) {
+        this.posX += x;
+        return this;
+    }
+
+    public Image setPlacePosY(float y) {
+        this.posY += y;
+        return this;
+    }
+
+    public Image placeEndX(float x) {
+        this.endX += x;
+        return this;
+    }
+
+    public Image placeEndY(float y) {
+        this.endY += y;
+        return this;
+    }
+
+    public String getLastWord() {
+        int lastSlash = Math.max(image.getResourcePath().lastIndexOf('/'), image.getResourcePath().lastIndexOf('\\'));
+        int lastDot = image.getResourcePath().lastIndexOf('.');
+        return image.getResourcePath().substring(lastSlash + 1, lastDot > lastSlash ? lastDot : image.getResourcePath().length());
+    }
+
 
     @Override
     public void onRender() {
-        GuiUtils.drawImage(this.image, SG.get(posX), SG.get(posY), SG.get(endX), SG.get(endY), alpha);
+        GuiUtils.drawImage(this.image, posX, posY, endX, endY, alpha);
     }
 }

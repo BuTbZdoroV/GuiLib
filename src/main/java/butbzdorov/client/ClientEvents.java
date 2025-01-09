@@ -15,12 +15,21 @@ import net.minecraftforge.event.entity.player.AchievementEvent;
 import org.newdawn.slick.Color;
 
 import javax.swing.*;
+import java.io.IOException;
 
 public class ClientEvents {
 
     private final Minecraft mc = Minecraft.getMinecraft();
 
-    public static final MainMenu mainMenu = new MainMenu();
+    public static final MainMenu mainMenu;
+
+    static {
+        try {
+            mainMenu = new MainMenu();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @SubscribeEvent
     public void onGuiOpenEvent(GuiOpenEvent event) {
