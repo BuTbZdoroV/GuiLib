@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class FunctionalDelicateController {
 
-    public static final Set<IFunctionalDelicate> functionalDelicates = new HashSet<>();
+    public static final Set<FunctionalDelicate> functionalDelicates = new HashSet<>();
 
     private static boolean leftMouseDown = false;
     private static boolean rightMouseDown = false;

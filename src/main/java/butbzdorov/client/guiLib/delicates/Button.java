@@ -1,23 +1,25 @@
 package butbzdorov.client.guiLib.delicates;
 
-import butbzdorov.client.gui.res.ResourceLoader;
+import butbzdorov.client.guiLib.IDelicate;
 import butbzdorov.client.guiLib.annotation.Delicate;
 import butbzdorov.client.guiLib.functional.EClickType;
+import butbzdorov.client.guiLib.functional.FunctionalDelicate;
 import butbzdorov.client.guiLib.functional.FunctionalDelicateController;
-import butbzdorov.client.guiLib.functional.IFunctionalDelicate;
 import butbzdorov.client.guiLib.utils.GuiUtils;
 import butbzdorov.client.guiLib.utils.newCustomNPC.CustomFont;
-import butbzdorov.client.guiLib.utils.newCustomNPC.CustomFontObject;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import net.minecraft.util.ResourceLocation;
 import org.newdawn.slick.Color;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+@EqualsAndHashCode(callSuper = true)
 @Delicate
 @Data
-public class Button implements IFunctionalDelicate {
+public class Button extends FunctionalDelicate {
 
     private String stringText;
     private float posX;
@@ -46,12 +48,14 @@ public class Button implements IFunctionalDelicate {
             action.accept(this);
         }
 
-        images.forEach(Image::onRender);
-        for (Text text : texts) {
-            text.onRender();
+        for (IDelicate child : childDelicates) {
+            if (child instanceof FunctionalDelicate && !((FunctionalDelicate) child).isActive) {
+                continue;
+            }
+            child.onRender();
         }
-       // texts.forEach(Text::onRender);
     }
+
 
     public Button(float posX, float posY, float endX, float endY) {
         this.stringText = "";
@@ -60,7 +64,7 @@ public class Button implements IFunctionalDelicate {
         this.endX = endX;
         this.endY = endY;
 
-        FunctionalDelicateController.functionalDelicates.add(this);
+       FunctionalDelicateController.functionalDelicates.add(this);
     }
 
     public Button addText(Text text) {
@@ -88,13 +92,23 @@ public class Button implements IFunctionalDelicate {
         return this;
     }
 
-    public Button addImage(ResourceLoader image) {
+    public Button addImage(ResourceLocation image) {
         images.add(new Image(image, this.posX, this.posY, this.endX, this.endY));
         return this;
     }
 
-    public Button addImage(ResourceLoader image, float posX, float posY, float endX, float endY) {
+    public Button addImage(ResourceLocation image, float posX, float posY, float endX, float endY) {
         images.add(new Image(image ,this.posX + posX, this.posY + posY, endX, endY));
+        return this;
+    }
+
+    public Button create() {
+        this.childDelicates.addAll(texts);
+        this.childDelicates.addAll(images);
+
+        if (getText(0) != null) {
+            System.out.println(getText(0).getText());
+        }
         return this;
     }
 

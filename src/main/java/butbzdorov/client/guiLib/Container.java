@@ -32,6 +32,12 @@ public class Container extends GuiScreen {
         height = scaledresolution.getScaledHeight();
     }
 
+    public void afterInitGui() {
+        for (Button button : buttons) {
+            button.create();
+        }
+    }
+
     @Override
     public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_) {
         super.drawScreen(p_73863_1_, p_73863_2_, p_73863_3_);

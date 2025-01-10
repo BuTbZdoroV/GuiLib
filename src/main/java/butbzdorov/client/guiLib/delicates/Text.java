@@ -2,8 +2,8 @@ package butbzdorov.client.guiLib.delicates;
 
 import butbzdorov.client.guiLib.animation.TextAnimation;
 import butbzdorov.client.guiLib.annotation.Delicate;
+import butbzdorov.client.guiLib.functional.FunctionalDelicate;
 import butbzdorov.client.guiLib.functional.FunctionalDelicateController;
-import butbzdorov.client.guiLib.functional.IFunctionalDelicate;
 import butbzdorov.client.guiLib.utils.SG;
 import butbzdorov.client.guiLib.utils.newCustomNPC.CustomFont;
 import butbzdorov.client.guiLib.utils.newCustomNPC.CustomFontRenderer;
@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class Text implements IFunctionalDelicate {
+public class Text extends FunctionalDelicate {
 
     private float posX;
     private float posY;
@@ -54,15 +54,9 @@ public class Text implements IFunctionalDelicate {
         this.posX = posX;
         this.posY = posY;
 
-        WidthAndHeightUpdate();
-        FunctionalDelicateController.functionalDelicates.add(this);
-    }
 
-    public float getWidth() {
-        return width;
-    }
-    public float getHeight() {
-        return height;
+        WidthAndHeightUpdate();
+        //FunctionalDelicateController.functionalDelicates.add(this);
     }
 
     public Text setCentrePosX() {

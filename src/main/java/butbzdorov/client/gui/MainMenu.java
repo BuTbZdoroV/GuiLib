@@ -9,46 +9,24 @@ import butbzdorov.client.guiLib.delicates.Button;
 import butbzdorov.client.guiLib.delicates.Image;
 import butbzdorov.client.guiLib.delicates.Text;
 import butbzdorov.client.guiLib.utils.GuiUtils;
+import butbzdorov.client.guiLib.utils.ResourceCache;
 import butbzdorov.client.guiLib.utils.SG;
-import butbzdorov.client.guiLib.utils.jglfontCore.JGLFont;
-import butbzdorov.client.guiLib.utils.jglfontCore.JGLFontFactory;
-import butbzdorov.client.guiLib.utils.lwjgl.LwjglDisplayListFontRenderer;
 import butbzdorov.client.guiLib.utils.newCustomNPC.CustomFont;
-import butbzdorov.client.guiLib.utils.newCustomNPC.CustomFontObject;
-import butbzdorov.client.guiLib.utils.newCustomNPC.CustomFontRenderer;
 import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.gui.GuiOptions;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSelectWorld;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 
-import javax.jws.Oneway;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import static org.lwjgl.opengl.GL11.*;
 
 @Delicate
 public class MainMenu extends Container implements IDelicate {
 
-    private static final Log log = LogFactory.getLog(MainMenu.class);
-    private static double scale = 1;
-    private static double dir = 1;
     private static long lastTime = System.currentTimeMillis();
-
-    JGLFontFactory factory = new JGLFontFactory(new LwjglDisplayListFontRenderer());
-    JGLFont jglFont = null;
-
 
     public MainMenu(){
         DelicateController.delicates.add(this);
-        //  jglFont = factory.loadFont("assets/butbzdorov/fonts/Dimkin-Bold.ttf#size=16;glyphSide=256");
     }
 
 
@@ -61,9 +39,9 @@ public class MainMenu extends Container implements IDelicate {
 
        SG.update();
 
-        buttons.add(new Button(SG.get(236), SG.get(445), SG.get(343), SG.get(60))
-                .addImage(new ResourceLoader("butbzdorov", "gui/mainmenu/button.png"))
-                .addImage(new ResourceLoader("butbzdorov", "gui/mainmenu/playicon.png"), 0,0,SG.get(15),SG.get(20))
+        buttons.add((Button) new Button(SG.get(236), SG.get(445), SG.get(343), SG.get(60))
+                .addImage(ResourceCache.getResource("butbzdorov:gui/mainmenu/button.png"))
+                .addImage(ResourceCache.getResource("butbzdorov:gui/mainmenu/playicon.png"), 0,0,SG.get(15),SG.get(20))
                 .addText("Hello WorlD", CustomFont.TTNormsBold, 30)
                 .onHover(button -> GuiUtils.drawRectS(button.getPosX(), button.getPosY(), button.getEndX(), button.getEndY(), Color.gray, 0.4))
                 .onClickButton(button -> {
@@ -84,7 +62,9 @@ public class MainMenu extends Container implements IDelicate {
                 .setPlacePosX(buttons.get(0).getText(0).getWidth() + SG.get(10))
                 .setPlacePosY(buttons.get(0).getText(0).getHeight()/2- image1.getEndY()/2));
 
-        buttons.add(new Button(SG.get(236), SG.get(550), SG.get(343), SG.get(60))
+        buttons.get(0).getText(0).isActive = false;
+
+        buttons.add((Button) new Button(SG.get(236), SG.get(550), SG.get(343), SG.get(60))
                 .addImage(new ResourceLoader("butbzdorov", "gui/mainmenu/button.png"))
                 .addImage(new ResourceLoader("butbzdorov", "gui/mainmenu/settingsicon.png"), 0,0,SG.get(15),SG.get(20))
                 .addText("Settings", CustomFont.TTNormsBold, 10)
@@ -106,7 +86,7 @@ public class MainMenu extends Container implements IDelicate {
                 .setPlacePosX(buttons.get(1).getText(0).getWidth())
                 .setPlacePosY(buttons.get(1).getText(0).getHeight()/2- image1.getEndY()/2));
 
-
+        afterInitGui();
 
         System.out.println("Debug");
 

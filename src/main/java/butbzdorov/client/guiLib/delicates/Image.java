@@ -5,12 +5,13 @@ import butbzdorov.client.guiLib.IDelicate;
 import butbzdorov.client.guiLib.annotation.Delicate;
 import butbzdorov.client.guiLib.utils.GuiUtils;
 import lombok.Data;
+import net.minecraft.util.ResourceLocation;
 
 @Delicate
 @Data
 public class Image implements IDelicate {
 
-    private ResourceLoader image;
+    private ResourceLocation image;
 
     private String ImageName = "NULL";
 
@@ -21,8 +22,10 @@ public class Image implements IDelicate {
 
     private float alpha = 1.0f;
 
+    public boolean IsVisible = true;
 
-    public Image(ResourceLoader image, float posX, float posY, float endX, float endY) {
+
+    public Image(ResourceLocation image, float posX, float posY, float endX, float endY) {
         this.image = image;
         this.ImageName = getLastWord();
         this.posX = posX;
@@ -88,6 +91,7 @@ public class Image implements IDelicate {
 
     @Override
     public void onRender() {
+        if (!IsVisible) return;
         GuiUtils.drawImage(this.image, posX, posY, endX, endY, alpha);
     }
 }
