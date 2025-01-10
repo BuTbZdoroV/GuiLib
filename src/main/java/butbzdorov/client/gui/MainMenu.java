@@ -39,9 +39,9 @@ public class MainMenu extends Container implements IDelicate {
 
        SG.update();
 
-        buttons.add((Button) new Button(SG.get(236), SG.get(445), SG.get(343), SG.get(60))
-                .addImage(ResourceCache.getResource("butbzdorov:gui/mainmenu/button.png"))
-                .addImage(ResourceCache.getResource("butbzdorov:gui/mainmenu/playicon.png"), 0,0,SG.get(15),SG.get(20))
+        buttons.add(new Button(SG.get(236), SG.get(445), SG.get(343), SG.get(60))
+                .addImage(ResourceCache.getResource("butbzdorov:gui/mainmenu/button.png"), "image0")
+                .addImage(ResourceCache.getResource("butbzdorov:gui/mainmenu/playicon.png"), "image1", 0,0,SG.get(15),SG.get(20))
                 .addText("Hello WorlD", CustomFont.TTNormsBold, 30)
                 .onHover(button -> GuiUtils.drawRectS(button.getPosX(), button.getPosY(), button.getEndX(), button.getEndY(), Color.gray, 0.4))
                 .onClickButton(button -> {
@@ -56,23 +56,23 @@ public class MainMenu extends Container implements IDelicate {
                 }));
 
 
-        buttons.get(0).editImage(1, image1 -> image1
-                .setPosX(buttons.get(0).getText(0).getPosX())
-                .setPosY(buttons.get(0).getText(0).getPosY())
-                .setPlacePosX(buttons.get(0).getText(0).getWidth() + SG.get(10))
-                .setPlacePosY(buttons.get(0).getText(0).getHeight()/2- image1.getEndY()/2));
+        buttons.get(0).editImage("image1", image1 -> image1
+                .setPosX(buttons.get(0).getText("Hello WorlD").getPosX())
+                .setPosY(buttons.get(0).getText("Hello WorlD").getPosY())
+                .setPlacePosX(buttons.get(0).getText("Hello WorlD").getWidth() + SG.get(10))
+                .setPlacePosY(buttons.get(0).getText("Hello WorlD").getHeight()/2- image1.getEndY()/2));
 
-        buttons.get(0).getText(0).isActive = false;
+        buttons.get(0).getText("Hello WorlD").isActive = true;
 
-        buttons.add((Button) new Button(SG.get(236), SG.get(550), SG.get(343), SG.get(60))
-                .addImage(new ResourceLoader("butbzdorov", "gui/mainmenu/button.png"))
-                .addImage(new ResourceLoader("butbzdorov", "gui/mainmenu/settingsicon.png"), 0,0,SG.get(15),SG.get(20))
+        buttons.add(new Button(SG.get(236), SG.get(550), SG.get(343), SG.get(60))
+                .addImage(new ResourceLoader("butbzdorov", "gui/mainmenu/button.png"), "image0")
+                .addImage(new ResourceLoader("butbzdorov", "gui/mainmenu/settingsicon.png"), "image1", 0,0,SG.get(15),SG.get(20))
                 .addText("Settings", CustomFont.TTNormsBold, 10)
                 .onHover(button -> GuiUtils.drawRectS(button.getPosX(), button.getPosY(), button.getEndX(), button.getEndY(), Color.gray, 0.4))
                 .onClickButton(button -> {
                     switch (button.clickType) {
                         case LEFT_MOUSE_PRESS:
-                            this.mc.displayGuiScreen(new GuiOptions(this, this.mc.gameSettings));
+                            mc.displayGuiScreen(new GuiOptions(this, mc.gameSettings));
                             break;
                         case RIGHT_MOUSE_PRESS:
                             mc.displayGuiScreen(new GuiMultiplayer(this));
@@ -80,11 +80,11 @@ public class MainMenu extends Container implements IDelicate {
                     }
                 }));
 
-        buttons.get(1).editImage(1, image1 -> image1
-                .setPosX(buttons.get(1).getText(0).getPosX() + SG.get(10))
-                .setPosY(buttons.get(1).getText(0).getPosY())
-                .setPlacePosX(buttons.get(1).getText(0).getWidth())
-                .setPlacePosY(buttons.get(1).getText(0).getHeight()/2- image1.getEndY()/2));
+        buttons.get(1).editImage("image1", image1 -> image1
+                .setPosX(buttons.get(1).getText("Settings").getPosX() + SG.get(10))
+                .setPosY(buttons.get(1).getText("Settings").getPosY())
+                .setPlacePosX(buttons.get(1).getText("Settings").getWidth())
+                .setPlacePosY(buttons.get(1).getText("Settings").getHeight()/2- image1.getEndY()/2));
 
         afterInitGui();
 

@@ -29,6 +29,8 @@ public class FunctionalDelicateController {
             delicate.onRender();
         }
 
+        functionalDelicates.isEmpty();
+
         for (Button button : Container.buttons) {
             button.onRender();
             button.handleHover(event.mouseX, event.mouseY);

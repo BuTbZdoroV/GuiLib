@@ -54,9 +54,7 @@ public class Text extends FunctionalDelicate {
         this.posX = posX;
         this.posY = posY;
 
-
         WidthAndHeightUpdate();
-        //FunctionalDelicateController.functionalDelicates.add(this);
     }
 
     public Text setCentrePosX() {

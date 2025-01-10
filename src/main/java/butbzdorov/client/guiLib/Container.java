@@ -1,6 +1,7 @@
 package butbzdorov.client.guiLib;
 
 import butbzdorov.client.guiLib.delicates.Button;
+import butbzdorov.client.guiLib.functional.FunctionalDelicateController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -33,9 +34,7 @@ public class Container extends GuiScreen {
     }
 
     public void afterInitGui() {
-        for (Button button : buttons) {
-            button.create();
-        }
+        FunctionalDelicateController.functionalDelicates.addAll(buttons);
     }
 
     @Override

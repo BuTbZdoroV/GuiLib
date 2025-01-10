@@ -14,6 +14,7 @@ import org.newdawn.slick.Color;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 @EqualsAndHashCode(callSuper = true)
@@ -42,75 +43,66 @@ public class Button extends FunctionalDelicate {
         return this;
     }
 
-    @Override
-    public void onRender() {
-        for (Consumer<Button> action : renderActions) {
-            action.accept(this);
-        }
-
-        for (IDelicate child : childDelicates) {
-            if (child instanceof FunctionalDelicate && !((FunctionalDelicate) child).isActive) {
-                continue;
-            }
-            child.onRender();
-        }
-    }
-
-
     public Button(float posX, float posY, float endX, float endY) {
         this.stringText = "";
         this.posX = posX;
         this.posY = posY;
         this.endX = endX;
         this.endY = endY;
-
-       FunctionalDelicateController.functionalDelicates.add(this);
     }
 
     public Button addText(Text text) {
-        texts.add(text);
+        text.setCentrePosX().setCentrePosY();
+        addChild(text, text.getText());
         return this;
     }
 
     public Button addText(String stringText, float posX, float posY) {
-        texts.add(new Text(stringText,this.posX + posX,this.posY + posY));
+        Text newText = new Text(stringText, posX + endX / 2, posY + endY / 2);
+        newText.setCentrePosX().setCentrePosY();
+        addChild(newText, stringText);
         return this;
     }
 
-    public Button addText(String stringText) {
-        texts.add(new Text(stringText, this.posX + this.endX/2,this.posY + this.endY/2).setCentrePosX().setCentrePosY());
+
+    public Button addText(String text, String identifier) {
+        Text newText = new Text(text, posX + endX / 2, posY + endY / 2);
+        newText.setCentrePosX().setCentrePosY();  // Установка центра
+        addChild(newText, identifier);  // Добавляем текст с уникальным идентификатором
         return this;
     }
 
     public Button addText(String stringText, CustomFont font, float fontSize) {
-        texts.add(new Text(stringText, this.posX + this.endX/2,this.posY + this.endY/2).setFont(font, fontSize).setCentrePosX().setCentrePosY());
+        Text newText = new Text(stringText, posX + endX / 2, posY + endY / 2);
+        newText.setFont(font, fontSize).setCentrePosX().setCentrePosY();
+        addChild(newText, stringText);
         return this;
     }
+
 
     public Button addImage(Image image) {
-        images.add(image);
+        addChild(image, image.getImageName());
         return this;
     }
 
-    public Button addImage(ResourceLocation image) {
-        images.add(new Image(image, this.posX, this.posY, this.endX, this.endY));
+    public Button addImage(ResourceLocation image, String identifier, float posX, float posY, float endX, float endY) {
+        Image newImage = new Image(image ,this.posX + posX, this.posY + posY, endX, endY);
+        addChild(newImage, identifier);
+        return this;
+    }
+
+    public Button addImage(ResourceLocation image, String identifier) {
+        Image newImage = new Image(image, posX, posY, endX, endY);
+        addChild(newImage, identifier);
         return this;
     }
 
     public Button addImage(ResourceLocation image, float posX, float posY, float endX, float endY) {
-        images.add(new Image(image ,this.posX + posX, this.posY + posY, endX, endY));
+        Image newImage = new Image(image ,this.posX + posX, this.posY + posY, endX, endY);
+        addChild(newImage, newImage.getImageName());
         return this;
     }
 
-    public Button create() {
-        this.childDelicates.addAll(texts);
-        this.childDelicates.addAll(images);
-
-        if (getText(0) != null) {
-            System.out.println(getText(0).getText());
-        }
-        return this;
-    }
 
     public Button onHover(Consumer<Button> action) {
         onHoverHandler = action;
@@ -151,65 +143,38 @@ public class Button extends FunctionalDelicate {
 
 
     public Button editText(String textName, Consumer<Text> textModifier) {
-        Text text = texts.stream()
-                .filter(t -> t.getText().equals(textName))
-                .findFirst()
-                .orElse(null);
-
-        if (text != null) {
-            textModifier.accept(text);
-        } else {
-            System.out.println("Text not found: " + textName);
-        }
-        return this;
+        return editText(String.valueOf(textName), textModifier);
     }
 
 
     public Button editText(int textIndex, Consumer<Text> textModifier) {
-        textModifier.accept(this.texts.get(textIndex));
-        return this;
+        return editText(String.valueOf(textIndex), textModifier);
     }
 
     public Text getText(int index){
-        return texts.get(index);
+        return getChildDelicate(Text.class, String.valueOf(index));
     }
 
-    public Text getText(String textName) {
-        return texts.stream()
-                .filter(text -> text.getText().equals(textName))
-                .findFirst()
-                .orElse(null);
+
+    public Text getText(String index){
+        return getChildDelicate(Text.class, String.valueOf(index));
     }
 
     public Image getImage(int index){
-        return images.get(index);
+        return getChildDelicate(Image.class, String.valueOf(index));
     }
 
-    public Image getImage(String textName) {
-        return images.stream()
-                .filter(image -> image.getImageName().equals(textName))
-                .findFirst()
-                .orElse(null);
+    public Image getImage(String index){
+        return getChildDelicate(Image.class, String.valueOf(index));
     }
 
     public Button editImage(String imageName, Consumer<Image> imageModifier) {
-        Image image = images.stream()
-                .filter(i -> i.getImageName().equals(imageName))
-                .findFirst()
-                .orElse(null);
-
-        if (image != null) {
-            imageModifier.accept(image);
-        } else {
-            System.out.println("Image not found: " + imageName);
-        }
-        return this;
+        return (Button) editChildComponent(Image.class,imageName, imageModifier);
     }
 
 
     public Button editImage(int imageIndex, Consumer<Image> imageModifier) {
-        imageModifier.accept(this.images.get(imageIndex));
-        return this;
+        return (Button) editChildComponent(Image.class,String.valueOf(imageIndex), imageModifier);
     }
 
 }
