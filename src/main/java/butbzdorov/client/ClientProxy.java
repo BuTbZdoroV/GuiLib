@@ -37,6 +37,8 @@ public class ClientProxy extends CommonProxy {
 
         DelicateController.registerComponent(ClientEvents.mainMenu);
 
+        DelicateRegister.registerAllComponents("butbzdorov.client");
+
     }
 
     @Override

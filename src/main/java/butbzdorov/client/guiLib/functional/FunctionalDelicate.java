@@ -1,43 +1,50 @@
 package butbzdorov.client.guiLib.functional;
 
 import butbzdorov.client.guiLib.IDelicate;
-import butbzdorov.client.guiLib.delicates.Button;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public abstract class FunctionalDelicate implements IDelicate {
+public abstract class FunctionalDelicate<T extends FunctionalDelicate<T>> implements IDelicate {
 
     protected final Map<Class<? extends IDelicate>, Map<String, IDelicate>> childDelicates = new HashMap<>();
     public boolean isActive = true;
+    public EClickType clickType;
 
-    public FunctionalDelicate addChild(IDelicate delicate, String identifier) {
-        Class<? extends IDelicate> componentClass = delicate.getClass();
+    @Getter protected float posX;
+    @Getter protected float posY;
+    @Getter protected float endX;
+    @Getter protected float endY;
+
+    protected Consumer<T> onClickHandler;
+    protected Consumer<T> onHoverHandler;
+
+    // Добавление дочернего компонента
+    public <C extends IDelicate> C addChild(IDelicate delicate, String identifier) {
         childDelicates
-                .computeIfAbsent(componentClass, k -> new HashMap<>())
+                .computeIfAbsent(delicate.getClass(), k -> new HashMap<>())
                 .put(identifier, delicate);
-        return this;
+        return (C) this;
     }
 
-    public <T extends IDelicate> T getChildDelicate(Class<T> componentClass, String identifier) {
+    // Получение дочернего компонента по типу и идентификатору
+    public <C extends IDelicate> C getChildDelicate(Class<C> componentClass, String identifier) {
         Map<String, IDelicate> components = childDelicates.get(componentClass);
-        if (components != null) {
-            return componentClass.cast(components.get(identifier));
-        }
-        return null;
+        return components != null ? componentClass.cast(components.get(identifier)) : null;
     }
 
-    public <T extends IDelicate> FunctionalDelicate editChildComponent(Class<T> componentClass,String childKey, Consumer<T> componentModifier) {
+    public <C extends IDelicate> C editChildComponent(Class<C> componentClass,String childKey, Consumer<C> componentModifier) {
         if (childDelicates.isEmpty() || childKey == null || componentModifier == null) {
-            return this;
+            return (C) this;
         }
 
         IDelicate child = getChildDelicate(componentClass, childKey);
 
         if (child != null) {
             try {
-                componentModifier.accept((T) child);
+                componentModifier.accept((C) child);
             } catch (ClassCastException e) {
                 System.out.println("Ошибка приведения типа для ключа: " + childKey);
             }
@@ -45,34 +52,54 @@ public abstract class FunctionalDelicate implements IDelicate {
             System.out.println("Дочерний компонент с ключом " + childKey + " не найден.");
         }
 
-        return this;
+        return (C) this;
     }
 
-
+    // Рендеринг всех дочерних компонентов
     public void onRender() {
         for (Map<String, IDelicate> components : childDelicates.values()) {
             for (IDelicate child : components.values()) {
-                if (child instanceof FunctionalDelicate && !((FunctionalDelicate) child).isActive) {
+                if (child instanceof FunctionalDelicate && !((FunctionalDelicate<?>) child).isActive) {
                     continue;
                 }
-
                 child.onRender();
             }
         }
     }
 
-    public FunctionalDelicate onClickButton(Consumer<Button> buttonModifier) {
-        return this;
+    public boolean isMouseOver(float mouseX, float mouseY) {
+        return mouseX >= this.posX && mouseX <= this.posX + this.endX &&
+                mouseY >= this.posY && mouseY <= this.posY + this.endY;
     }
-    public FunctionalDelicate onClickLeftButton(Consumer<Button> buttonModifier) {
-        return this;
+
+    // Установка обработчика для наведения
+    public T onHover(Consumer<T> action) {
+        onHoverHandler = action;
+        return (T) this;
     }
-    public FunctionalDelicate onReleaseLeftButton(Consumer<Button> buttonModifier) {
-        return this;
+
+    // Обработка наведения
+    public void handleHover(float mouseX, float mouseY) {
+        if (onHoverHandler != null && isMouseOver(mouseX, mouseY)) {
+            onHoverHandler.accept((T) this);
+        }
     }
-    public FunctionalDelicate onHoldLeftButton(Consumer<Button> buttonModifier) {
-        return this;
+
+    // Установка обработчика клика
+    public T onClickMouse(Consumer<T> buttonModifier) {
+        this.onClickHandler = buttonModifier;
+        return (T) this;
     }
+
+    // Обработка клика
+    public void handleClick(EClickType type) {
+        this.clickType = type;
+        if (onClickHandler != null) {
+            ((Consumer<T>) onClickHandler).accept((T) this);
+        }
+    }
+
+    // Методы для обработки кнопок
     public void onClickRightButton() {}
     public void onReleaseRightButton() {}
     public void onHoldRightButton() {}

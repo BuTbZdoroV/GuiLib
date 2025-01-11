@@ -4,6 +4,9 @@
 
 package butbzdorov.client.guiLib.utils.newCustomNPC;
 
+import lombok.Getter;
+
+@Getter
 public class CustomFontObject {
 	public static CustomFontObject TTNormsMedium = new CustomFontObject("TTNorms-Medium", 24);
 
@@ -17,20 +20,12 @@ public class CustomFontObject {
         this.size = size;
     }
 
-	public String getFont() {
-		return font;
-	}
-
-	public CustomFontObject setFont(String font) {
+    public CustomFontObject setFont(String font) {
 		this.font = font;
 		return this;
 	}
 
-	public int getSize() {
-		return size;
-	}
-
-	public CustomFontObject setSize(Number size) {
+    public CustomFontObject setSize(Number size) {
 		this.size = size.intValue();
 		return this;
 	}

@@ -1,5 +1,6 @@
 package butbzdorov.client.guiLib.delicates;
 
+import butbzdorov.client.guiLib.DelicateController;
 import butbzdorov.client.guiLib.animation.TextAnimation;
 import butbzdorov.client.guiLib.annotation.Delicate;
 import butbzdorov.client.guiLib.functional.FunctionalDelicate;
@@ -15,12 +16,12 @@ import org.newdawn.slick.Color;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
-@Delicate
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class Text extends FunctionalDelicate {
+public class Text extends FunctionalDelicate<Text> {
 
     private float posX;
     private float posY;
@@ -30,9 +31,9 @@ public class Text extends FunctionalDelicate {
 
     private String text = "";
     private CustomFont font = CustomFont.TTNormsBold;
+    private float fontSize = 20;
     private Color color = Color.white;
     private float alpha = 1;
-    private float fontSize = 20;
 
     private final List<TextAnimation> animations = new ArrayList<>();
 
@@ -41,12 +42,14 @@ public class Text extends FunctionalDelicate {
         this.font = font;
         width =  CustomFontRenderer.getStringWidth(font, text);
         height = CustomFontRenderer.getStringHeight(font, text, -1);
+        DelicateController.registerComponent(this);
     }
 
     public Text(String text) {
         this.text = text;
         width =  CustomFontRenderer.getStringWidth(font, text);
         height = CustomFontRenderer.getStringHeight(font, text, -1);
+        DelicateController.registerComponent(this);
     }
 
     public Text(String text, float posX, float posY) {
@@ -55,6 +58,17 @@ public class Text extends FunctionalDelicate {
         this.posY = posY;
 
         WidthAndHeightUpdate();
+
+        System.out.println(this.endX);
+        this.endX = width;
+        this.endY = height;
+        DelicateController.registerComponent(this);
+    }
+
+    @Override
+    public boolean isMouseOver(float mouseX, float mouseY) {
+        return mouseX >= this.posX && mouseX <= this.posX + this.endX &&
+                mouseY >= this.posY && mouseY <= this.posY + this.endY;
     }
 
     public Text setCentrePosX() {
@@ -101,9 +115,15 @@ public class Text extends FunctionalDelicate {
         return this;
     }
 
+    @Override
+    public Text onClickMouse(Consumer<Text> textmoddifier) {
+        onClickHandler = textmoddifier;
+        return this;
+    }
+
     public void WidthAndHeightUpdate() {
-        width = CustomFontRenderer.getStringWidth(this.font.setSize(fontSize), text); // Пересчитываем ширину
-        height = CustomFontRenderer.getStringHeight(this.font.setSize((int) fontSize), text, -1); // Пересчитываем высоту
+        width = CustomFontRenderer.getStringWidth(this.font.setSize(fontSize), text);
+        height = CustomFontRenderer.getStringHeight(this.font.setSize((int) fontSize), text, -1);
     }
 
     public Text setFont(CustomFont font, float sizeFont) {

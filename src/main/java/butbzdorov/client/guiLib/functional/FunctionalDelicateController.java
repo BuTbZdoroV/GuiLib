@@ -4,6 +4,7 @@ import butbzdorov.client.guiLib.Container;
 import butbzdorov.client.guiLib.DelicateController;
 import butbzdorov.client.guiLib.IDelicate;
 import butbzdorov.client.guiLib.delicates.Button;
+import butbzdorov.client.guiLib.delicates.Text;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -27,55 +28,56 @@ public class FunctionalDelicateController {
         }
         for (IDelicate delicate : DelicateController.delicates) {
             delicate.onRender();
-        }
+            if (delicate instanceof FunctionalDelicate) {
+                FunctionalDelicate funcDelicate = (FunctionalDelicate) delicate;
+                funcDelicate.handleHover(event.mouseX, event.mouseY);
 
-        functionalDelicates.isEmpty();
-
-        for (Button button : Container.buttons) {
-            button.onRender();
-            button.handleHover(event.mouseX, event.mouseY);
-
-            if (button.isMouseOver(event.mouseX, event.mouseY)) {
-                handleMouseEvents(button, event);
+                if (funcDelicate.isMouseOver(event.mouseX, event.mouseY)) {
+                    if (funcDelicate instanceof Text){
+                        Text text = (Text) funcDelicate;
+                        System.out.println(text.getText());
+                    }
+                    handleMouseEvents(funcDelicate, event);
+                }
             }
         }
     }
 
-    private void handleMouseEvents(Button button, GuiScreenEvent.DrawScreenEvent.Post event) {
+    private void handleMouseEvents(FunctionalDelicate functionalDelicate, GuiScreenEvent.DrawScreenEvent.Post event) {
 
         if (Mouse.isButtonDown(0)) {
             if (!leftMouseDown) {
                 leftMouseDown = true;
-                button.handleClick(EClickType.LEFT_MOUSE_PRESS);
+                functionalDelicate.handleClick(EClickType.LEFT_MOUSE_PRESS);
             }
         } else {
             if (leftMouseDown) {
                 leftMouseDown = false;
-                button.handleClick(EClickType.LEFT_MOUSE_RELEASE);
+                functionalDelicate.handleClick(EClickType.LEFT_MOUSE_RELEASE);
             }
         }
 
         if (Mouse.isButtonDown(1)) {
             if (!rightMouseDown) {
                 rightMouseDown = true;
-                button.handleClick(EClickType.RIGHT_MOUSE_PRESS);
+                functionalDelicate.handleClick(EClickType.RIGHT_MOUSE_PRESS);
             }
         } else {
             if (rightMouseDown) {
                 rightMouseDown = false;
-                button.handleClick(EClickType.RIGHT_MOUSE_RELEASE);
+                functionalDelicate.handleClick(EClickType.RIGHT_MOUSE_RELEASE);
             }
         }
 
         if (Mouse.isButtonDown(2)) {
             if (!middleMouseDown) {
                 middleMouseDown = true;
-                button.handleClick(EClickType.MIDDLE_MOUSE_PRESS);
+                functionalDelicate.handleClick(EClickType.MIDDLE_MOUSE_PRESS);
             }
         } else {
             if (middleMouseDown) {
                 middleMouseDown = false;
-                button.handleClick(EClickType.MIDDLE_MOUSE_RELEASE);
+                functionalDelicate.handleClick(EClickType.MIDDLE_MOUSE_RELEASE);
             }
         }
     }

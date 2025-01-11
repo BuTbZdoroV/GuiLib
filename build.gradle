@@ -47,9 +47,10 @@ minecraft {
 
 
 dependencies {
-	compileOnly 'org.projectlombok:lombok:1.18.20'
 	annotationProcessor 'org.projectlombok:lombok:1.18.20'
-	implementation 'com.google.code.gson:gson:2.10.1'
+	implementation 'org.slf4j:slf4j-api:2.0.9' // Укажи последнюю версию библиотеки
+	runtimeOnly 'org.slf4j:slf4j-simple:2.0.9' // Для простого логирования
+	implementation 'org.javassist:javassist:3.29.2-GA' // Укажи последнюю версию
 }
 
 configurations {

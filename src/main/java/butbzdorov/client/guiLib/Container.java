@@ -34,7 +34,6 @@ public class Container extends GuiScreen {
     }
 
     public void afterInitGui() {
-        FunctionalDelicateController.functionalDelicates.addAll(buttons);
     }
 
     @Override

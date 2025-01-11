@@ -1,13 +1,14 @@
 package butbzdorov.client.guiLib.delicates;
 
 import butbzdorov.client.gui.res.ResourceLoader;
+import butbzdorov.client.guiLib.DelicateController;
 import butbzdorov.client.guiLib.IDelicate;
 import butbzdorov.client.guiLib.annotation.Delicate;
 import butbzdorov.client.guiLib.utils.GuiUtils;
 import lombok.Data;
 import net.minecraft.util.ResourceLocation;
 
-@Delicate
+
 @Data
 public class Image implements IDelicate {
 
@@ -33,6 +34,7 @@ public class Image implements IDelicate {
         this.endX = endX;
         this.endY = endY;
         this.alpha = 1.0f;
+        DelicateController.registerComponent(this);
     }
 
     public Image(float posX, float posY, float endX, float endY) {
