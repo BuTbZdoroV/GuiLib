@@ -1,8 +1,11 @@
 package butbzdorov.client;
 
+import butbzdorov.client.gui.MainMenu;
+import butbzdorov.client.gui.SettingsMenu;
 import butbzdorov.client.guiLib.DelicateController;
 import butbzdorov.client.guiLib.annotation.DelicateRegister;
 import butbzdorov.client.guiLib.functional.FunctionalDelicateController;
+import butbzdorov.client.guiLib.screen.ScreenManager;
 import butbzdorov.common.CommonEvents;
 import butbzdorov.common.CommonProxy;
 import butbzdorov.common.utils.EventsUtils;
@@ -35,9 +38,10 @@ public class ClientProxy extends CommonProxy {
         new DelicateController();
         EventsUtils.registerAllEvents(DelicateController.class);
 
-        DelicateController.registerComponent(ClientEvents.mainMenu);
+        DelicateRegister.registerAllComponents();
 
-        DelicateRegister.registerAllComponents("butbzdorov.client");
+        ScreenManager.registerScreen(new MainMenu());
+        ScreenManager.registerScreen(new SettingsMenu());
 
     }
 

@@ -1,13 +1,15 @@
 package butbzdorov.client.guiLib.functional;
 
+import butbzdorov.client.guiLib.DelicateController;
 import butbzdorov.client.guiLib.IDelicate;
+import butbzdorov.client.guiLib.utils.SG;
 import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public abstract class FunctionalDelicate<T extends FunctionalDelicate<T>> implements IDelicate {
+public abstract class FunctionalDelicate<T extends FunctionalDelicate<T>> extends IDelicate {
 
     protected final Map<Class<? extends IDelicate>, Map<String, IDelicate>> childDelicates = new HashMap<>();
     public boolean isActive = true;

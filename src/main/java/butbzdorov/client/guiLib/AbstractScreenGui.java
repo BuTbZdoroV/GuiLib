@@ -1,17 +1,18 @@
 package butbzdorov.client.guiLib;
 
+import butbzdorov.client.guiLib.annotation.Delicate;
 import butbzdorov.client.guiLib.delicates.Button;
-import butbzdorov.client.guiLib.functional.FunctionalDelicateController;
+import butbzdorov.client.guiLib.functional.FunctionalDelicate;
+import butbzdorov.client.guiLib.screen.IScreen;
+import butbzdorov.client.guiLib.screen.ScreenController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Container extends GuiScreen {
+public abstract class AbstractScreenGui extends GuiScreen implements IScreen {
 
     protected final static Minecraft mc = Minecraft.getMinecraft();
 
@@ -23,7 +24,11 @@ public class Container extends GuiScreen {
 
     public final static List<Button> buttons = new ArrayList<>();
 
-    public Container() {
+    public AbstractScreenGui() {
+    }
+    protected boolean initialize = false;
+    protected void initialize(){
+        initialize = true;
     }
 
     @Override
@@ -31,9 +36,13 @@ public class Container extends GuiScreen {
         ScaledResolution scaledresolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
         width = scaledresolution.getScaledWidth();
         height = scaledresolution.getScaledHeight();
+        if (!initialize) initialize();
     }
 
+
+
     public void afterInitGui() {
+            ScreenController.registerDelicates(this, buttons);
     }
 
     @Override
@@ -42,18 +51,6 @@ public class Container extends GuiScreen {
 
         mouseX = p_73863_2_;
         mouseY = p_73863_1_;
-
-/*        mouseX = p_73863_1_ * width / mc.displayWidth;
-        mouseY = p_73863_2_ * height / mc.displayHeight;
-
-        // Масштабирование экрана
-        GL11.glPushMatrix();
-        GL11.glScalef(width / mc.displayWidth, height / mc.displayHeight, 1.0f);
-
-        for (Button button : buttons) {
-            button.onRender();
-        }
-        GL11.glPopMatrix();*/
     }
 
     protected float getCenterScreenWidth() {
@@ -64,4 +61,8 @@ public class Container extends GuiScreen {
         return  height / 2;
     }
 
+    @Override
+    public String getScreenId() {
+        return "default";
+    }
 }

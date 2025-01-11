@@ -1,11 +1,13 @@
 package butbzdorov.client.guiLib.delicates;
 
+import butbzdorov.client.guiLib.AbstractScreenGui;
 import butbzdorov.client.guiLib.DelicateController;
 import butbzdorov.client.guiLib.annotation.Delicate;
 import butbzdorov.client.guiLib.functional.EClickType;
 import butbzdorov.client.guiLib.functional.FunctionalDelicate;
 import butbzdorov.client.guiLib.functional.FunctionalDelicateController;
 import butbzdorov.client.guiLib.utils.GuiUtils;
+import butbzdorov.client.guiLib.utils.SG;
 import butbzdorov.client.guiLib.utils.newCustomNPC.CustomFont;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,7 +19,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 @EqualsAndHashCode(callSuper = true)
-@Delicate
 @Data
 public class Button extends FunctionalDelicate<Button> {
 
@@ -32,7 +33,7 @@ public class Button extends FunctionalDelicate<Button> {
     }
 
     public Button() {
-        DelicateController.registerComponent(this);
+
     }
 
     public Button(float posX, float posY, float endX, float endY) {
@@ -40,7 +41,7 @@ public class Button extends FunctionalDelicate<Button> {
         this.posY = posY;
         this.endX = endX;
         this.endY = endY;
-        DelicateController.registerComponent(this);
+        setId("button:" + (AbstractScreenGui.buttons.size()-1));
     }
 
     public Button addText(Text text) {

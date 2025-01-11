@@ -6,11 +6,13 @@ import butbzdorov.client.guiLib.IDelicate;
 import butbzdorov.client.guiLib.annotation.Delicate;
 import butbzdorov.client.guiLib.utils.GuiUtils;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import net.minecraft.util.ResourceLocation;
 
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class Image implements IDelicate {
+public class Image extends IDelicate {
 
     private ResourceLocation image;
 
@@ -34,7 +36,6 @@ public class Image implements IDelicate {
         this.endX = endX;
         this.endY = endY;
         this.alpha = 1.0f;
-        DelicateController.registerComponent(this);
     }
 
     public Image(float posX, float posY, float endX, float endY) {
@@ -96,4 +97,11 @@ public class Image implements IDelicate {
         if (!IsVisible) return;
         GuiUtils.drawImage(this.image, posX, posY, endX, endY, alpha);
     }
+
+    @Override
+    public String getId() {
+        return ImageName;
+    }
+
+
 }
