@@ -2,27 +2,44 @@ package butbzdorov.client.guiLib.annotation;
 
 import butbzdorov.client.guiLib.DelicateController;
 import butbzdorov.client.guiLib.IDelicate;
+import org.reflections.Reflections;
+import org.reflections.scanners.Scanners;
+import org.reflections.util.ConfigurationBuilder;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Modifier;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Set;
 
 public class DelicateRegister {
 
-    public static void registerAllComponents(String packageName) {
+    public static void registerAllComponents() {
         try {
-            List<Class<?>> classes = getClasses(packageName);
+            Reflections reflections = new Reflections(new ConfigurationBuilder()
+                    .forPackages("butbzdorov.client")
+                    .addScanners(Scanners.TypesAnnotated, Scanners.FieldsAnnotated));
 
-            for (Class<?> clazz : classes) {
-                if (clazz.isAnnotationPresent(Delicate.class) && IDelicate.class.isAssignableFrom(clazz)) {
-                    if (!Modifier.isAbstract(clazz.getModifiers())) {
-                        IDelicate delicate = (IDelicate) clazz.getDeclaredConstructor().newInstance();
-                        DelicateController.registerComponent(delicate);
+            // Находим классы с аннотированными полями
+            Set<Field> delicateFields = reflections.getFieldsAnnotatedWith(Delicate.class);
+
+            for (Field field : delicateFields) {
+                field.setAccessible(true); // Делаем поле доступным
+
+                // Получаем класс, в котором находится поле
+                Class<?> declaringClass = field.getDeclaringClass();
+                Object instance = declaringClass.getDeclaredConstructor().newInstance();
+
+                // Извлекаем значение поля
+                Object value = field.get(instance);
+
+                if (value instanceof IDelicate) {
+                    // Если это объект IDelicate
+                    registerDelicate((IDelicate) value);
+                } else if (value instanceof List<?>) {
+                    // Если это список, проверяем элементы
+                    for (Object item : (List<?>) value) {
+                        if (item instanceof IDelicate) {
+                            registerDelicate((IDelicate) item);
+                        }
                     }
                 }
             }
@@ -31,45 +48,8 @@ public class DelicateRegister {
         }
     }
 
-    private static List<Class<?>> getClasses(String packageName) throws ClassNotFoundException, IOException {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        String path = packageName.replace('.', '/');
-        Enumeration<URL> resources = classLoader.getResources(path);
-        List<File> dirs = new ArrayList<>();
-
-        while (resources.hasMoreElements()) {
-            URL resource = resources.nextElement();
-            dirs.add(new File(resource.getFile()));
-        }
-
-        List<Class<?>> classes = new ArrayList<>();
-        for (File directory : dirs) {
-            classes.addAll(findClasses(directory, packageName));
-        }
-        return classes;
-    }
-
-    private static List<Class<?>> findClasses(File directory, String packageName) throws ClassNotFoundException {
-        List<Class<?>> classes = new ArrayList<>();
-        if (!directory.exists()) {
-            return classes;
-        }
-
-        File[] files = directory.listFiles();
-        if (files == null) return classes;
-
-        for (File file : files) {
-            if (file.isDirectory()) {
-                classes.addAll(findClasses(file, packageName + "." + file.getName()));
-            } else if (file.getName().endsWith(".class")) {
-                String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
-                classes.add(Class.forName(className));
-            }
-        }
-        return classes;
-    }
-
-    public static void registerDelicate(IDelicate delicate) {
-        DelicateController.registerComponent(delicate);
+    private static void registerDelicate(IDelicate delicate) {
+        System.out.println("Registered: " + delicate.getClass().getSimpleName());
+        DelicateController.delicates.add(delicate);
     }
 }

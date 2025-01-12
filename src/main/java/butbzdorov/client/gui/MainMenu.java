@@ -1,27 +1,31 @@
 package butbzdorov.client.gui;
 
 import butbzdorov.client.gui.res.ResourceLoader;
-import butbzdorov.client.guiLib.Container;
+import butbzdorov.client.guiLib.AbstractScreenGui;
+import butbzdorov.client.guiLib.DelicateController;
 import butbzdorov.client.guiLib.IDelicate;
-import butbzdorov.client.guiLib.annotation.Delicate;
 import butbzdorov.client.guiLib.delicates.Button;
 import butbzdorov.client.guiLib.delicates.Image;
 import butbzdorov.client.guiLib.delicates.Text;
 import butbzdorov.client.guiLib.delicates.prepared.SimpleButton;
+import butbzdorov.client.guiLib.screen.IScreen;
+import butbzdorov.client.guiLib.screen.ScreenController;
+import butbzdorov.client.guiLib.screen.ScreenManager;
 import butbzdorov.client.guiLib.utils.GuiUtils;
 import butbzdorov.client.guiLib.utils.ResourceCache;
 import butbzdorov.client.guiLib.utils.SG;
 import butbzdorov.client.guiLib.utils.newCustomNPC.CustomFont;
+import com.google.common.collect.Lists;
 import net.minecraft.client.gui.GuiMultiplayer;
-import net.minecraft.client.gui.GuiOptions;
 import net.minecraft.client.gui.GuiSelectWorld;
 import org.newdawn.slick.Color;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
-@Delicate
-public class MainMenu extends Container implements IDelicate {
+public class MainMenu extends AbstractScreenGui {
 
     private static long lastTime = System.currentTimeMillis();
 
@@ -32,7 +36,7 @@ public class MainMenu extends Container implements IDelicate {
         super.initGui();
         buttons.clear();
 
-       SG.update();
+        SG.update();
 
         buttons.add(new Button(SG.get(236), SG.get(445), SG.get(343), SG.get(60))
                 .addImage(ResourceCache.getResource("butbzdorov","gui/mainmenu/button.png"), "image0")
@@ -82,15 +86,12 @@ public class MainMenu extends Container implements IDelicate {
                 .setPlacePosX(buttons.get(1).getText("Settings").getWidth())
                 .setPlacePosY(buttons.get(1).getText("Settings").getHeight()/2- image1.getEndY()/2));
 
-        afterInitGui();
-
         buttons.add(new SimpleButton("Лунтик гей", ResourceCache.getResource("butbzdorov", "gui/mainmenu/button.png"),
                 SG.get(236), SG.get(700), SG.get(343), SG.get(60))
                 .onClickMouse(button -> {
                     switch (button.clickType){
                         case LEFT_MOUSE_PRESS:
-                            button.getText(0).setText("Hello WorlD");
-                            button.addText("HUY", SG.get(30), SG.get(20));
+                            ScreenManager.switchToScreen("settings_menu");
                             break;
                         case RIGHT_MOUSE_PRESS:
                             button.getText(0).setText("Лунтик гей");
@@ -102,7 +103,15 @@ public class MainMenu extends Container implements IDelicate {
 
         System.out.println("Debug");
 
+        afterInitGui();
 
+
+    }
+
+    @Override
+    protected void initialize() {
+        super.initialize();
+        System.out.println("Инициализация");
     }
 
     private String dynamicText = "Loading111...";
@@ -119,12 +128,31 @@ public class MainMenu extends Container implements IDelicate {
     private final static Image image = new Image(new ResourceLoader("butbzdorov", "gui/mainmenu/background.png"), 0, 0, SG.get(1920), SG.get(1080));
 
     @Override
-    public void onRender() {
+    public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_) {
+        super.drawScreen(p_73863_1_, p_73863_2_, p_73863_3_);
+
+    }
+
+    @Override
+    public String getScreenId() {
+        return "main_menu";
+    }
+
+    @Override
+    public List<? extends IDelicate> getDelicates() {
+        List<IDelicate> allDelicates = Lists.newArrayList();
+        allDelicates.addAll(buttons); // Добавляем все кнопки
+        allDelicates.add(image);      // Добавляем изображение
+        allDelicates.add(randomText); // Добавляем текст
+        return allDelicates;
+    }
+
+
+    @Override
+    public void renderScreen() {
         image.setEndX(this.width).setEndY(this.height);
         image.onRender();
-
         updateDynamicText();
         randomText.setText(dynamicText).setFontSize(60);
-        randomText.onRender();
     }
 }

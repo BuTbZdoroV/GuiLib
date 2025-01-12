@@ -5,6 +5,7 @@ import butbzdorov.client.gui.res.ResourceLoader;
 import butbzdorov.client.guiLib.delicates.Button;
 import butbzdorov.client.guiLib.delicates.Image;
 import butbzdorov.client.guiLib.delicates.Text;
+import butbzdorov.client.guiLib.screen.ScreenManager;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.client.Minecraft;
@@ -30,6 +31,7 @@ public class ClientEvents {
 
         if (event.gui instanceof GuiMainMenu){
             event.gui = mainMenu;
+            ScreenManager.switchToScreen("main_menu");
         }
     }
 

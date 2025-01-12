@@ -16,12 +16,6 @@ public class DelicateController {
 
     public static final Set<IDelicate> delicates = new HashSet<>();
 
-
-    public static void registerComponent(Delicate delicate) {
-        System.out.println(delicate.getClass().getName());
-        delicates.add((IDelicate) delicate);
-    }
-
     public static void registerComponent(IDelicate delicate) {
         System.out.println(delicate.getClass().getName());
         delicates.add(delicate);

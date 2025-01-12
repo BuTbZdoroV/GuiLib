@@ -42,14 +42,12 @@ public class Text extends FunctionalDelicate<Text> {
         this.font = font;
         width =  CustomFontRenderer.getStringWidth(font, text);
         height = CustomFontRenderer.getStringHeight(font, text, -1);
-        DelicateController.registerComponent(this);
     }
 
     public Text(String text) {
         this.text = text;
         width =  CustomFontRenderer.getStringWidth(font, text);
         height = CustomFontRenderer.getStringHeight(font, text, -1);
-        DelicateController.registerComponent(this);
     }
 
     public Text(String text, float posX, float posY) {
@@ -62,7 +60,6 @@ public class Text extends FunctionalDelicate<Text> {
         System.out.println(this.endX);
         this.endX = width;
         this.endY = height;
-        DelicateController.registerComponent(this);
     }
 
     @Override
@@ -147,16 +144,21 @@ public class Text extends FunctionalDelicate<Text> {
         animations.remove(animation);
     }
 
-    @Override
+  /*  @Override
     public void onStartRender(float milliseconds) {
         for (TextAnimation animation : animations) {
             animation.update(this, milliseconds);
         }
-    }
+    }*/
 
     @Override
     public void onRender() {
         CustomFontRenderer.drawStringWithMaxWidth(text, posX, posY, -1, font.setSize((int) fontSize));
+    }
+
+    @Override
+    public String getId() {
+        return text + "_" + posX + "_" + posY;
     }
 
 }
