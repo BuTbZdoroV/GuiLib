@@ -1,14 +1,10 @@
 package butbzdorov.client.guiLib.delicates;
 
-import butbzdorov.client.guiLib.AbstractScreenGui;
-import butbzdorov.client.guiLib.DelicateController;
-import butbzdorov.client.guiLib.annotation.Delicate;
 import butbzdorov.client.guiLib.functional.EClickType;
 import butbzdorov.client.guiLib.functional.FunctionalDelicate;
-import butbzdorov.client.guiLib.functional.FunctionalDelicateController;
 import butbzdorov.client.guiLib.utils.GuiUtils;
-import butbzdorov.client.guiLib.utils.SG;
 import butbzdorov.client.guiLib.utils.newCustomNPC.CustomFont;
+import butbzdorov.client.guiLib.window.IWindow;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.util.ResourceLocation;
@@ -34,6 +30,7 @@ public class Button extends FunctionalDelicate<Button> {
 
     public Button() {
 
+
     }
 
     public Button(float posX, float posY, float endX, float endY) {
@@ -41,7 +38,6 @@ public class Button extends FunctionalDelicate<Button> {
         this.posY = posY;
         this.endX = endX;
         this.endY = endY;
-        setId("button:" + (AbstractScreenGui.buttons.size()-1));
     }
 
     public Button addText(Text text) {

@@ -2,7 +2,7 @@ package butbzdorov.client.guiLib.utils.jglfontCore;
 
 
 /**
- * A JGLFont ready to be rendered on screen.
+ * A JGLFont ready to be rendered on window.
  * @author void
  */
 public interface JGLFont {

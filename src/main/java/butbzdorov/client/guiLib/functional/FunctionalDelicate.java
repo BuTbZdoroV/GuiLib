@@ -1,9 +1,9 @@
 package butbzdorov.client.guiLib.functional;
 
-import butbzdorov.client.guiLib.DelicateController;
 import butbzdorov.client.guiLib.IDelicate;
-import butbzdorov.client.guiLib.utils.SG;
+import butbzdorov.client.guiLib.window.IWindow;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,13 +15,11 @@ public abstract class FunctionalDelicate<T extends FunctionalDelicate<T>> extend
     public boolean isActive = true;
     public EClickType clickType;
 
-    @Getter protected float posX;
-    @Getter protected float posY;
-    @Getter protected float endX;
-    @Getter protected float endY;
-
     protected Consumer<T> onClickHandler;
     protected Consumer<T> onHoverHandler;
+
+    public IWindow window; //TODO Когда нибуд
+
 
     // Добавление дочернего компонента
     public <C extends IDelicate> C addChild(IDelicate delicate, String identifier) {
@@ -57,7 +55,6 @@ public abstract class FunctionalDelicate<T extends FunctionalDelicate<T>> extend
         return (C) this;
     }
 
-    // Рендеринг всех дочерних компонентов
     public void onRender() {
         for (Map<String, IDelicate> components : childDelicates.values()) {
             for (IDelicate child : components.values()) {

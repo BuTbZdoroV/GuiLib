@@ -41,6 +41,7 @@ public final class SG {
     }
 
     public static float get(Number value) {
+        SG.update();
         return (scaleValue / (DEFAULT_HEIGHT / value.floatValue())) / 2;
     }
 

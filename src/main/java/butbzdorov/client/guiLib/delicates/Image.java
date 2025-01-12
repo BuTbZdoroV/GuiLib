@@ -1,9 +1,6 @@
 package butbzdorov.client.guiLib.delicates;
 
-import butbzdorov.client.gui.res.ResourceLoader;
-import butbzdorov.client.guiLib.DelicateController;
 import butbzdorov.client.guiLib.IDelicate;
-import butbzdorov.client.guiLib.annotation.Delicate;
 import butbzdorov.client.guiLib.utils.GuiUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,16 +9,11 @@ import net.minecraft.util.ResourceLocation;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class Image extends IDelicate {
+public class Image extends IDelicate<Image> {
 
     private ResourceLocation image;
 
     private String ImageName = "NULL";
-
-    private float posX = 0.0f;
-    private float posY = 0.0f;
-    private float endX = 0.0f;
-    private float endY = 0.0f;
 
     private float alpha = 1.0f;
 

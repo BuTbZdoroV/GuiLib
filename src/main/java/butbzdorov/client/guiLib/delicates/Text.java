@@ -1,17 +1,10 @@
 package butbzdorov.client.guiLib.delicates;
 
-import butbzdorov.client.guiLib.DelicateController;
 import butbzdorov.client.guiLib.animation.TextAnimation;
-import butbzdorov.client.guiLib.annotation.Delicate;
 import butbzdorov.client.guiLib.functional.FunctionalDelicate;
-import butbzdorov.client.guiLib.functional.FunctionalDelicateController;
-import butbzdorov.client.guiLib.utils.SG;
 import butbzdorov.client.guiLib.utils.newCustomNPC.CustomFont;
 import butbzdorov.client.guiLib.utils.newCustomNPC.CustomFontRenderer;
 import lombok.*;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
-import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 
 import java.util.ArrayList;
@@ -22,13 +15,6 @@ import java.util.function.Consumer;
 @NoArgsConstructor
 @Getter
 public class Text extends FunctionalDelicate<Text> {
-
-    private float posX;
-    private float posY;
-
-    private float width;
-    private float height;
-
     private String text = "";
     private CustomFont font = CustomFont.TTNormsBold;
     private float fontSize = 20;
@@ -40,14 +26,14 @@ public class Text extends FunctionalDelicate<Text> {
     public Text(String text, CustomFont font) {
         this.text = text;
         this.font = font;
-        width =  CustomFontRenderer.getStringWidth(font, text);
-        height = CustomFontRenderer.getStringHeight(font, text, -1);
+        endX =  CustomFontRenderer.getStringWidth(font, text);
+        endY = CustomFontRenderer.getStringHeight(font, text, -1);
     }
 
     public Text(String text) {
         this.text = text;
-        width =  CustomFontRenderer.getStringWidth(font, text);
-        height = CustomFontRenderer.getStringHeight(font, text, -1);
+        endX =  CustomFontRenderer.getStringWidth(font, text);
+        endY = CustomFontRenderer.getStringHeight(font, text, -1);
     }
 
     public Text(String text, float posX, float posY) {
@@ -58,8 +44,8 @@ public class Text extends FunctionalDelicate<Text> {
         WidthAndHeightUpdate();
 
         System.out.println(this.endX);
-        this.endX = width;
-        this.endY = height;
+        this.endX = endX;
+        this.endY = endY;
     }
 
     @Override
@@ -69,11 +55,11 @@ public class Text extends FunctionalDelicate<Text> {
     }
 
     public Text setCentrePosX() {
-        this.posX -= getWidth()/2;
+        this.posX -= getEndX()/2;
         return this;
     }
     public Text setCentrePosY() {
-        this.posY -= getHeight()/2;
+        this.posY -= getEndY()/2;
         return this;
     }
 
@@ -119,8 +105,8 @@ public class Text extends FunctionalDelicate<Text> {
     }
 
     public void WidthAndHeightUpdate() {
-        width = CustomFontRenderer.getStringWidth(this.font.setSize(fontSize), text);
-        height = CustomFontRenderer.getStringHeight(this.font.setSize((int) fontSize), text, -1);
+        endX = CustomFontRenderer.getStringWidth(this.font.setSize(fontSize), text);
+        endY = CustomFontRenderer.getStringHeight(this.font.setSize((int) fontSize), text, -1);
     }
 
     public Text setFont(CustomFont font, float sizeFont) {
@@ -144,12 +130,14 @@ public class Text extends FunctionalDelicate<Text> {
         animations.remove(animation);
     }
 
-  /*  @Override
+   /* @Override
     public void onStartRender(float milliseconds) {
         for (TextAnimation animation : animations) {
             animation.update(this, milliseconds);
         }
     }*/
+
+
 
     @Override
     public void onRender() {
