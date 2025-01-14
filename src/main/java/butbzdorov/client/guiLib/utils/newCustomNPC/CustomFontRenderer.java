@@ -25,7 +25,7 @@ public class CustomFontRenderer {
 	private static final Map cache = new HashMap();
 	private static final Map colors = new HashMap();
 	public static int guiScale;
-	static float fontScale;
+	static float fontScale = 18;
 
 	private static UnicodeFont get(CustomFont font) {
 		SG.update();
@@ -403,17 +403,16 @@ public class CustomFontRenderer {
 		org.newdawn.slick.Color c = (org.newdawn.slick.Color) colors.get(String.valueOf(s));
 		return c != null ? c : org.newdawn.slick.Color.white;
 	}
-
+	Minecraft mc = Minecraft.getMinecraft();
 	@SubscribeEvent
 	public void preRender(RenderTickEvent ev) {
 		if (ev.phase == Phase.START) {
-			Minecraft mc = Minecraft.getMinecraft();
 			CustomFontRenderer.fontScale = 1.0f + ((CustomFontRenderer.guiScale = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight)
 							.getScaleFactor()) - 2) / 2.0f;
 		}
 	}
 
-	private static void registerColors() {
+	public static void registerColors() {
 		colors.put("0", new org.newdawn.slick.Color(0));
 		colors.put("1", new org.newdawn.slick.Color(170));
 		colors.put("2", new org.newdawn.slick.Color('\uaa00'));
@@ -435,8 +434,5 @@ public class CustomFontRenderer {
 		colors.put("y", new org.newdawn.slick.Color(3178751));
 	}
 
-	static {
-		FMLCommonHandler.instance().bus().register(new CustomFontRenderer());
-		registerColors();
-	}
+
 }

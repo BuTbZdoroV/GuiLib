@@ -1,12 +1,11 @@
 package butbzdorov.client.guiLib.window;
 
+import butbzdorov.client.gui.MainScreen;
 import butbzdorov.client.guiLib.IDelicate;
 import butbzdorov.client.guiLib.delicates.Image;
 import butbzdorov.client.guiLib.functional.EClickType;
 import butbzdorov.client.guiLib.functional.FunctionalDelicate;
-import butbzdorov.client.guiLib.utils.SG;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 
@@ -16,24 +15,25 @@ import java.util.List;
 public abstract class Window implements IWindow {
 
     public static final List<IWindow> Windows = new ArrayList<>();
+    public static IWindow selectedWindow;
 
     public final List<IDelicate> delicates = new ArrayList<>();
     protected final Minecraft mc = Minecraft.getMinecraft();
 
     public Resolution resolution = new Resolution(0, 0, 1920, 1080);
-    protected final GuiScreen mainScreen;
+    protected final MainScreen mainScreen;
 
-    protected boolean isVisible = true;
+    public boolean isVisible = true;
 
-    protected Window(GuiScreen MainScreen, Resolution resolution) {
-        this.mainScreen = MainScreen;
+    protected Window(MainScreen mainScreen, Resolution resolution) {
+        this.mainScreen = mainScreen;
         this.resolution = resolution;
 
         Windows.add(this);
     }
 
-    protected Window(GuiScreen MainScreen) {
-        this.mainScreen = MainScreen;
+    protected Window(MainScreen mainScreen) {
+        this.mainScreen = mainScreen;
 
         Windows.add(this);
     }
@@ -72,6 +72,9 @@ public abstract class Window implements IWindow {
     public void renderWindow(float mouseX, float mouseY) {
             if (!isVisible) return;
 
+            if (selectedWindow != null) {
+                System.out.println(selectedWindow.getWindowId());
+            }
             List<IDelicate> delicates = (List<IDelicate>) this.getDelicates();
             for (IDelicate delicate : delicates) {
                 delicate.onRender();
@@ -89,13 +92,20 @@ public abstract class Window implements IWindow {
     private static boolean rightMouseDown = false;
     private static boolean middleMouseDown = false;
 
+    public boolean isMouseOverWindow(float mouseX, float mouseY) {
+        return mouseX >= this.resolution.getPosX() && mouseX <= this.resolution.getPosX() + this.resolution.getEndX() &&
+                mouseY >= this.resolution.getPosY() && mouseY <= this.resolution.getPosY() + this.resolution.getEndY();
+    }
+
     private void handleMouseEvents(FunctionalDelicate functionalDelicate) {
 
         if (Mouse.isButtonDown(0)) {
             if (!leftMouseDown) {
+                selectedWindow = this;
                 leftMouseDown = true;
-                functionalDelicate.handleClick(EClickType.LEFT_MOUSE_PRESS);
+                functionalDelicate.handleClick(EClickType.LEFT_MOUSE_CLICK);
             }
+            functionalDelicate.handleClick(EClickType.LEFT_MOUSE_PRESS);
         } else {
             if (leftMouseDown) {
                 leftMouseDown = false;

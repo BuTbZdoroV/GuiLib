@@ -1,6 +1,7 @@
 package butbzdorov.client;
 
 import butbzdorov.client.gui.MainScreen;
+import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.client.Minecraft;
@@ -13,7 +14,7 @@ public class ClientEvents {
 
     private final Minecraft mc = Minecraft.getMinecraft();
 
-    MainScreen baseMenu = new MainScreen();
+    public static final MainScreen baseMenu = new MainScreen();
 
     @SubscribeEvent
     public void onGuiOpenEvent(GuiOpenEvent event) {

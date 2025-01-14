@@ -29,7 +29,7 @@ import java.util.List;
     public final List<Button> buttons = new ArrayList<>();
     static boolean flag = false;
 
-        public MainMenu(GuiScreen mainScreen) {
+        public MainMenu(MainScreen mainScreen) {
             super(mainScreen);
         }
 
@@ -66,13 +66,15 @@ import java.util.List;
                 .addImage(ResourceCache.getResource("butbzdorov", "gui/mainmenu/button.png"), "image0")
                 .addImage(ResourceCache.getResource("butbzdorov", "gui/mainmenu/settingsicon.png"), "image1", 0,0,SG.get(15),SG.get(20))
                 .addText("Settings", CustomFont.TTNormsBold, 10)
-                .onHover(button -> GuiUtils.drawRectS(button.getPosX(), button.getPosY(), button.getEndX(), button.getEndY(), Color.gray, 0.4))
+                .onHover(button -> {
+                    GuiUtils.drawRectS(button.getPosX(), button.getPosY(), button.getEndX(), button.getEndY(), Color.gray, 0.4);
+                })
                 .onClickMouse(button -> {
                     switch (button.clickType) {
-                        case LEFT_MOUSE_PRESS:
-                            //mc.displayGuiScreen(new GuiOptions(this, mc.gameSettings));
+                        case LEFT_MOUSE_RELEASE:
+                            GuiUtils.drawLine(button.getPosX() + button.getEndX(), button.getPosY(), mainScreen.mouseX, mainScreen.mouseY, 5, 100, 0xfffffff, 1);
                             break;
-                        case RIGHT_MOUSE_PRESS:
+                        case RIGHT_MOUSE_RELEASE:
                             mc.displayGuiScreen(new GuiMultiplayer(mainScreen));
                             break;
                     }

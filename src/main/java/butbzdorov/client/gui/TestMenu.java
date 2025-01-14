@@ -3,24 +3,20 @@ package butbzdorov.client.gui;
 import butbzdorov.client.guiLib.IDelicate;
 import butbzdorov.client.guiLib.delicates.Button;
 import butbzdorov.client.guiLib.delicates.Image;
-import butbzdorov.client.guiLib.delicates.prepared.SimpleButton;
 import butbzdorov.client.guiLib.delicates.prepared.WindowButton;
 import butbzdorov.client.guiLib.utils.ResourceCache;
 import butbzdorov.client.guiLib.utils.SG;
 import butbzdorov.client.guiLib.window.Resolution;
 import butbzdorov.client.guiLib.window.Window;
-import com.google.common.collect.Lists;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiScreen;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuiTest extends Window {
+public class TestMenu extends Window {
 
     private final List<Button> buttons = new ArrayList<>();
 
-    public GuiTest(GuiScreen MainScreen) {
+    public TestMenu(MainScreen MainScreen) {
         super(MainScreen, new Resolution(20, 20, 500, 500));
     }
 
