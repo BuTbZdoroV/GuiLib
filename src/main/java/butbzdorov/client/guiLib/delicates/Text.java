@@ -7,6 +7,7 @@ import butbzdorov.client.guiLib.utils.newCustomNPC.CustomFontRenderer;
 import lombok.*;
 import org.newdawn.slick.Color;
 
+import javax.vecmath.Vector2d;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -24,42 +25,42 @@ public class Text extends FunctionalDelicate<Text> {
     private final List<TextAnimation> animations = new ArrayList<>();
 
     public Text(String text, CustomFont font) {
+        super();
         this.text = text;
         this.font = font;
-        endX =  CustomFontRenderer.getStringWidth(font, text);
-        endY = CustomFontRenderer.getStringHeight(font, text, -1);
+        width =  CustomFontRenderer.getStringWidth(font, text);
+        height = CustomFontRenderer.getStringHeight(font, text, -1);
     }
 
     public Text(String text) {
+        super();
         this.text = text;
-        endX =  CustomFontRenderer.getStringWidth(font, text);
-        endY = CustomFontRenderer.getStringHeight(font, text, -1);
+        width =  CustomFontRenderer.getStringWidth(font, text);
+        height = CustomFontRenderer.getStringHeight(font, text, -1);
+    }
+
+    public Text(String text, Vector2d position) {
+        super();
+        this.text = text;
+        this.position = position;
+
+        WidthAndHeightUpdate();
     }
 
     public Text(String text, float posX, float posY) {
+        super();
         this.text = text;
-        this.posX = posX;
-        this.posY = posY;
+        this.position = new Vector2d(posX, posY);
 
         WidthAndHeightUpdate();
-
-        System.out.println(this.endX);
-        this.endX = endX;
-        this.endY = endY;
-    }
-
-    @Override
-    public boolean isMouseOver(float mouseX, float mouseY) {
-        return mouseX >= this.posX && mouseX <= this.posX + this.endX &&
-                mouseY >= this.posY && mouseY <= this.posY + this.endY;
     }
 
     public Text setCentrePosX() {
-        this.posX -= getEndX()/2;
+        this.position.x -= getWidth()/2;
         return this;
     }
     public Text setCentrePosY() {
-        this.posY -= getEndY()/2;
+        this.position.y -= getHeight()/2;
         return this;
     }
 
@@ -68,23 +69,31 @@ public class Text extends FunctionalDelicate<Text> {
         return this;
     }
 
+    public double getPosX(){
+        return position.x;
+    }
+
+    public double getPosY(){
+        return position.y;
+    }
+
     public Text setPosX(float posX) {
-        this.posX = posX;
+        this.position.x = posX;
         return this;
     }
 
     public Text setPosY(float posY) {
-        this.posY = posY;
+        this.position.y = posY;
         return this;
     }
 
     public Text setPlacePosX(float posX) {
-        this.posX += posX;
+        this.position.x += posX;
         return this;
     }
 
     public Text setPlacePosY(float posY) {
-        this.posY += posY;
+        this.position.y += posY;
         return this;
     }
 
@@ -105,8 +114,8 @@ public class Text extends FunctionalDelicate<Text> {
     }
 
     public void WidthAndHeightUpdate() {
-        endX = CustomFontRenderer.getStringWidth(this.font.setSize(fontSize), text);
-        endY = CustomFontRenderer.getStringHeight(this.font.setSize((int) fontSize), text, -1);
+        width = CustomFontRenderer.getStringWidth(this.font.setSize(fontSize), text);
+        height = CustomFontRenderer.getStringHeight(this.font.setSize((int) fontSize), text, -1);
     }
 
     public Text setFont(CustomFont font, float sizeFont) {
@@ -118,6 +127,11 @@ public class Text extends FunctionalDelicate<Text> {
 
     public Text setFontSize(float fontSize) {
         this.fontSize = fontSize;
+        return this;
+    }
+
+    public Text setTextColor(Color color) {
+        this.color = color;
         return this;
     }
 
@@ -141,12 +155,12 @@ public class Text extends FunctionalDelicate<Text> {
 
     @Override
     public void onRender() {
-        CustomFontRenderer.drawStringWithMaxWidth(text, posX, posY, -1, font.setSize((int) fontSize));
+        CustomFontRenderer.drawStringWithMaxWidth(text, (float) position.x, (float) position.y, -1, font.setSize((int) fontSize), color);
     }
 
     @Override
     public String getId() {
-        return text + "_" + posX + "_" + posY;
+        return text + "_" + position.x + "_" + position.y;
     }
 
 }

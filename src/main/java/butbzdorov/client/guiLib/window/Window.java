@@ -5,25 +5,36 @@ import butbzdorov.client.guiLib.IDelicate;
 import butbzdorov.client.guiLib.delicates.Image;
 import butbzdorov.client.guiLib.functional.EClickType;
 import butbzdorov.client.guiLib.functional.FunctionalDelicate;
+import butbzdorov.client.guiLib.functional.ScrollPanel;
+import butbzdorov.client.guiLib.utils.Math.Vector2D;
+import butbzdorov.client.guiLib.utils.SG;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public abstract class Window implements IWindow {
 
     public static final List<IWindow> Windows = new ArrayList<>();
-    public static IWindow selectedWindow;
 
     public final List<IDelicate> delicates = new ArrayList<>();
     protected final Minecraft mc = Minecraft.getMinecraft();
 
-    public Resolution resolution = new Resolution(0, 0, 1920, 1080);
+    private Resolution resolution = new Resolution(0, 0, 1920, 1080);
+    @Getter
+    public int layer = 0;
     protected final MainScreen mainScreen;
 
     public boolean isVisible = true;
+
+    private Vector2D position;
+    private boolean dragging = false;
+    private Vector2D dragOffset = new Vector2D(0, 0);
 
     protected Window(MainScreen mainScreen, Resolution resolution) {
         this.mainScreen = mainScreen;
@@ -34,7 +45,7 @@ public abstract class Window implements IWindow {
 
     protected Window(MainScreen mainScreen) {
         this.mainScreen = mainScreen;
-
+        this.position = new Vector2D(0, 0);
         Windows.add(this);
     }
 
@@ -43,40 +54,35 @@ public abstract class Window implements IWindow {
         return "default";
     }
 
-    @Override
-    public List<? extends IDelicate> getDelicates() {
+    public List<IDelicate> getDelicates() {
         return delicates;
     }
 
     @Override
     public void initWindow() {
-        List<IDelicate> delicates = (List<IDelicate>) this.getDelicates();
-            for (IDelicate delicate : delicates) {
+        for (IDelicate delicate : delicates) {
+            if (delicate != null) {
+                delicate.init();
                 if (delicate instanceof FunctionalDelicate) {
                     FunctionalDelicate<?> funcDelicate = (FunctionalDelicate<?>) delicate;
-                    if (funcDelicate.window != null) {
-                        funcDelicate.setPosX(funcDelicate.getPosX() + funcDelicate.window.getResolution().getPosX());
-                        funcDelicate.setPosY(funcDelicate.getPosY() + funcDelicate.window.getResolution().getPosY());
-                    }
                 }
+            }
         }
     }
 
     @Override
     public Resolution getResolution() {
-        return resolution;
+        return new Resolution(SG.get(resolution.getPosX()), SG.get(resolution.getPosY()),
+                SG.get(resolution.getEndX()), SG.get(resolution.getEndY()));
     }
 
 
     @Override
-    public void renderWindow(float mouseX, float mouseY) {
-            if (!isVisible) return;
+    public void renderWindow(float mouseX, float mouseY, float frametime) {
+        if (!isVisible) return;
 
-            if (selectedWindow != null) {
-                System.out.println(selectedWindow.getWindowId());
-            }
-            List<IDelicate> delicates = (List<IDelicate>) this.getDelicates();
-            for (IDelicate delicate : delicates) {
+        for (IDelicate delicate : delicates) {
+            if (delicate != null) {
                 delicate.onRender();
                 if (delicate instanceof FunctionalDelicate) {
                     FunctionalDelicate<?> funcDelicate = (FunctionalDelicate<?>) delicate;
@@ -86,6 +92,14 @@ public abstract class Window implements IWindow {
                     }
                 }
             }
+        }
+    }
+
+
+
+    public <T extends ScrollPanel> T addScrollPanel(T panel) {
+        addDelicate(panel);
+        return panel;
     }
 
     private static boolean leftMouseDown = false;
@@ -97,11 +111,16 @@ public abstract class Window implements IWindow {
                 mouseY >= this.resolution.getPosY() && mouseY <= this.resolution.getPosY() + this.resolution.getEndY();
     }
 
+    private void clickOnLayer() {
+        if (Mouse.isButtonDown(0)) {
+
+        }
+    }
+
     private void handleMouseEvents(FunctionalDelicate functionalDelicate) {
 
         if (Mouse.isButtonDown(0)) {
             if (!leftMouseDown) {
-                selectedWindow = this;
                 leftMouseDown = true;
                 functionalDelicate.handleClick(EClickType.LEFT_MOUSE_CLICK);
             }
@@ -138,10 +157,42 @@ public abstract class Window implements IWindow {
         }
     }
 
+    public <T extends IDelicate> T addDelicate(T delicate) {
+        Objects.requireNonNull(delicate, "Delicate cannot be null");
+
+        if (delicate.getId() == null || delicate.getId().isEmpty()) {
+            throw new IllegalArgumentException("Delicate must have non-empty ID");
+        }
+
+        removeDelicate(delicate);
+        delicates.add(delicate);
+        return delicate;
+    }
+
+    public boolean removeDelicate(IDelicate delicate) {
+        return delicates.removeIf(d -> d.equals(delicate));
+    }
+
+    protected <T extends IDelicate> T getDelicate(int index) {
+        return (T) this.delicates.get(index);
+    }
+
+    protected <T extends IDelicate> T getDelicate(IDelicate iDelicate) {
+        return (T) this.delicates.stream().filter(delicate -> delicate.equals(iDelicate)).findFirst().orElse(null);
+    }
+
+    protected <T extends IDelicate> T getDelicate(String delicateUUID) {
+        return (T) this.delicates.stream().filter(delicate -> delicate.getId() == delicateUUID).findFirst().orElse(null);
+    }
+
+    protected void clean() {
+        delicates.clear();
+    }
+
     protected void drawBackground(ResourceLocation background) {
         Image image = new Image(background, resolution.getPosX(), resolution.getPosY(), resolution.getEndX(), resolution.getEndY());
         delicates.add(image);
-
     }
+
 
 }

@@ -2,9 +2,12 @@ package butbzdorov.client.guiLib.delicates;
 
 import butbzdorov.client.guiLib.IDelicate;
 import butbzdorov.client.guiLib.utils.GuiUtils;
+import butbzdorov.client.guiLib.window.IWindow;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.util.ResourceLocation;
+
+import javax.vecmath.Vector2d;
 
 
 @EqualsAndHashCode(callSuper = true)
@@ -20,60 +23,81 @@ public class Image extends IDelicate<Image> {
     public boolean IsVisible = true;
 
 
-    public Image(ResourceLocation image, float posX, float posY, float endX, float endY) {
+    public Image(ResourceLocation image, Vector2d position, float width, float height) {
+        super(position, width, height);
         this.image = image;
         this.ImageName = getLastWord();
-        this.posX = posX;
-        this.posY = posY;
-        this.endX = endX;
-        this.endY = endY;
         this.alpha = 1.0f;
     }
 
-    public Image(float posX, float posY, float endX, float endY) {
+    public Image(Vector2d position, float width, float height) {
+        super(position, width, height);
         this.image = null; //Todo Заменить на EMPTY
-        this.posX = posX;
-        this.posY = posY;
-        this.endX = endX;
-        this.endY = endY;
     }
 
-    public Image setPosX(float x) {
-        this.posX = x;
-        return this;
+    public Image(IWindow window, ResourceLocation image, Vector2d position, float width, float height) {
+        super(window , position, width, height);
+        this.image = image;
+        this.ImageName = getLastWord();
+        this.alpha = 1.0f;
     }
 
-    public Image setPosY(float y) {
-        this.posY = y;
-        return this;
+
+    public Image(ResourceLocation image, float posX, float posY, float width, float height) {
+        super(new Vector2d(posX, posY), width, height);
+        this.image = image;
+        this.ImageName = getLastWord();
+        this.alpha = 1.0f;
     }
 
-    public Image setEndX(float endX) {
-        this.endX = endX;
+    public Image(float posX, float posY, float width, float height) {
+        super(new Vector2d(posX, posY), width, height);
+        this.image = null; //Todo Заменить на EMPTY
+    }
+
+    public Image(IWindow window, ResourceLocation image, float posX, float posY, float width, float height) {
+        super(window , new Vector2d(posX, posY), width, height);
+        this.image = image;
+        this.ImageName = getLastWord();
+        this.alpha = 1.0f;
+    }
+
+    public Image(IWindow window, float posX, float posY, float width, float height) {
+        super(window, new Vector2d(posX, posY), width, height);
+        this.image = null; //Todo Заменить на EMPTY
+    }
+
+    public Image(IWindow window, Vector2d position, float width, float height) {
+        super(window, position, width, height);
+        this.image = null; //Todo Заменить на EMPTY
+    }
+
+    public Image setWidth(float width) {
+        this.width = width;
         return this;
     }
-    public Image setEndY(float endY) {
-        this.endY = endY;
+    public Image setHeight(float height) {
+        this.height = height;
         return this;
     }
 
     public Image setPlacePosX(float x) {
-        this.posX += x;
+        this.position.x += x;
         return this;
     }
 
     public Image setPlacePosY(float y) {
-        this.posY += y;
+        this.position.y += y;
         return this;
     }
 
     public Image placeEndX(float x) {
-        this.endX += x;
+        this.width += x;
         return this;
     }
 
     public Image placeEndY(float y) {
-        this.endY += y;
+        this.height += y;
         return this;
     }
 
@@ -87,7 +111,7 @@ public class Image extends IDelicate<Image> {
     @Override
     public void onRender() {
         if (!IsVisible) return;
-        GuiUtils.drawImage(this.image, posX, posY, endX, endY, alpha);
+        GuiUtils.drawImage(this.image, position.x, position.y, width, height, alpha);
     }
 
     @Override

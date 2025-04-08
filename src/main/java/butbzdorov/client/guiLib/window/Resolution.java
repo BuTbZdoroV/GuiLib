@@ -1,6 +1,7 @@
 package butbzdorov.client.guiLib.window;
 
 
+import butbzdorov.client.guiLib.utils.SG;
 import lombok.Data;
 
 @Data
@@ -17,4 +18,5 @@ public class Resolution {
         this.endX = endX;
         this.endY = endY;
     }
+
 }

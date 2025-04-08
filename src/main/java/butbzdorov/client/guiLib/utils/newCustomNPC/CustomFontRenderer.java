@@ -1,13 +1,13 @@
 package butbzdorov.client.guiLib.utils.newCustomNPC;
 
+import butbzdorov.client.guiLib.utils.GuiUtils;
 import butbzdorov.client.guiLib.utils.SG;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.common.gameevent.TickEvent.RenderTickEvent;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontFormatException;
+
+import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -20,6 +20,8 @@ import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.font.effects.ColorEffect;
+
+import static org.lwjgl.opengl.GL11.glColor4f;
 
 public class CustomFontRenderer {
 	private static final Map cache = new HashMap();
@@ -61,7 +63,7 @@ public class CustomFontRenderer {
 			}
 
 			UnicodeFont uf1 = new UnicodeFont(s, size, false, false);
-			uf1.getEffects().add(new ColorEffect(Color.WHITE));
+			uf1.getEffects().add(new ColorEffect(Color.white));
 			String symbols1 = " +=0123456789\u0430\u0431\u0432\u0433\u0434\u0435\u0451\u0436\u0437\u0438\u0439\u043a\u043b\u043c\u043d\u043e\u043f\u0440\u0441\u0442\u0443\u0444\u0445\u0446\u0447\u0448\u0449\u044a\u044b\u044c\u044d\u044e\u044f\u0410\u0411\u0412\u0413\u0414\u0415\u0401\u0416\u0417\u0418\u0419\u041a\u041b\u041c\u041d\u041e\u041f\u0420\u0421\u0422\u0423\u0424\u0425\u0426\u0427\u0428\u0429\u042a\u042b\u042c\u042d\u042e\u042fabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!-_()?,./\"\'[]{}*&^:%$;\u2116@#~`><\u2022";
 			uf1.addGlyphs(symbols1);
 
@@ -267,11 +269,11 @@ public class CustomFontRenderer {
 		return (int) ((float) y / (fontScale * 2.0F));
 	}
 
-	public static void drawString(String string, float x, float y, CustomFont font) {
-		drawStringWithMaxWidth(string, x, y, -1, font);
+	public static void drawString(String string, float x, float y, CustomFont font, org.newdawn.slick.Color color) {
+		drawStringWithMaxWidth(string, x, y, -1, font, color);
 	}
 
-	public static void drawStringWithMaxWidth(String string, float x, float y, int w, CustomFont font) {
+	public static void drawStringWithMaxWidth(String string, float x, float y, int w, CustomFont font, org.newdawn.slick.Color color) {
 		float guiScale = fontScale * 2.0F;
 		float rscale = 1.0F / guiScale;
 		x = (int) ((float) x * guiScale);
@@ -317,7 +319,7 @@ public class CustomFontRenderer {
 								y += uf.getHeight(source) + 2;
 								width = 0;
 							}
-							uf.drawString((float) x, (float) y, t, getColor(col));
+							uf.drawString((float) x, (float) y, t, color);
 							width += uf.getWidth(t);
 							x += uf.getWidth(t);
 						}

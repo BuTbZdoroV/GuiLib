@@ -2,9 +2,9 @@ package butbzdorov.client.guiLib.functional;
 
 import butbzdorov.client.guiLib.IDelicate;
 import butbzdorov.client.guiLib.window.IWindow;
-import lombok.Getter;
-import lombok.Setter;
+import org.lwjgl.opengl.GL11;
 
+import javax.vecmath.Vector2d;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -18,8 +18,17 @@ public abstract class FunctionalDelicate<T extends FunctionalDelicate<T>> extend
     protected Consumer<T> onClickHandler;
     protected Consumer<T> onHoverHandler;
 
-    public IWindow window; //TODO Когда нибуд
+    public FunctionalDelicate(IWindow window, Vector2d position, float endX, float endY) {
+        super(window, position, endX, endY);
+    }
 
+    public FunctionalDelicate(Vector2d position, float endX, float endY) {
+        super(position, endX, endY);
+    }
+
+    public FunctionalDelicate() {
+        super();
+    }
 
     // Добавление дочернего компонента
     public <C extends IDelicate> C addChild(IDelicate delicate, String identifier) {
@@ -29,13 +38,12 @@ public abstract class FunctionalDelicate<T extends FunctionalDelicate<T>> extend
         return (C) this;
     }
 
-    // Получение дочернего компонента по типу и идентификатору
     public <C extends IDelicate> C getChildDelicate(Class<C> componentClass, String identifier) {
         Map<String, IDelicate> components = childDelicates.get(componentClass);
         return components != null ? componentClass.cast(components.get(identifier)) : null;
     }
 
-    public <C extends IDelicate> C editChildComponent(Class<C> componentClass,String childKey, Consumer<C> componentModifier) {
+    public <C extends IDelicate> C editChildComponent(Class<C> componentClass, String childKey, Consumer<C> componentModifier) {
         if (childDelicates.isEmpty() || childKey == null || componentModifier == null) {
             return (C) this;
         }
@@ -56,6 +64,8 @@ public abstract class FunctionalDelicate<T extends FunctionalDelicate<T>> extend
     }
 
     public void onRender() {
+        GL11.glPushMatrix();
+        GL11.glTranslatef(0,0,zLevel);
         for (Map<String, IDelicate> components : childDelicates.values()) {
             for (IDelicate child : components.values()) {
                 if (child instanceof FunctionalDelicate && !((FunctionalDelicate<?>) child).isActive) {
@@ -64,12 +74,9 @@ public abstract class FunctionalDelicate<T extends FunctionalDelicate<T>> extend
                 child.onRender();
             }
         }
+        GL11.glPopMatrix();
     }
 
-    public boolean isMouseOver(float mouseX, float mouseY) {
-        return mouseX >= this.posX && mouseX <= this.posX + this.endX &&
-                mouseY >= this.posY && mouseY <= this.posY + this.endY;
-    }
 
     // Установка обработчика для наведения
     public T onHover(Consumer<T> action) {
@@ -94,20 +101,7 @@ public abstract class FunctionalDelicate<T extends FunctionalDelicate<T>> extend
     public void handleClick(EClickType type) {
         this.clickType = type;
         if (onClickHandler != null) {
-            ((Consumer<T>) onClickHandler).accept((T) this);
+            (onClickHandler).accept((T) this);
         }
     }
-
-    // Методы для обработки кнопок
-    public void onClickRightButton() {}
-    public void onReleaseRightButton() {}
-    public void onHoldRightButton() {}
-    public void onClickMiddleButton() {}
-    public void onReleaseMiddleButton() {}
-    public void onHoldMiddleButton() {}
-    public void onScrollUp() {}
-    public void onScrollDown() {}
-    public void onMouseMove(int x, int y) {}
-    public void onMouseEnter() {}
-    public void onMouseExit() {}
 }
