@@ -1,7 +1,6 @@
 package butbzdorov.client;
 
 import butbzdorov.client.gui.MainScreen;
-import butbzdorov.client.guiLib.delicates.prepared.BaseWindow;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.client.Minecraft;

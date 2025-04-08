@@ -16,19 +16,32 @@ import java.util.Map;
 
 import static butbzdorov.client.gui.MainScreen.mouseX;
 import static butbzdorov.client.gui.MainScreen.mouseY;
-
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class ScrollPanel extends FunctionalDelicate<ScrollPanel> {
+    // Вертикальный скролл
     private double scrollY = 0;
-    private double maxScroll = 0;
-    private boolean isScrolling = false;
+    private double maxScrollY = 0;
     private double scrollBarWidth = 6;
-    private double scrollBarHeight = 0;
+    private double scrollBarHeight = 6;
     private double scrollBarPosY = 0;
+    private final static float SCROLL_OFFSET_Y = 8;
+
+    // Горизонтальный скролл
+    private double scrollX = 0;
+    private double maxScrollX = 0;
+    private double hScrollBarHeight = 6;
+    private double hScrollBarWidth = 6;
+    private double scrollBarPosX = 0;
+    private final static float SCROLL_OFFSET_X = 6;
+
+    // Состояние
+    private boolean isScrollingY = false;
+    private boolean isScrollingX = false;
     private boolean hovered = false;
-    private boolean scrollBarHovered = false;
-    private double lastMouseY;
+    private boolean scrollBarYHovered = false;
+    private boolean scrollBarXHovered = false;
+    private double lastMouseX, lastMouseY;
 
     public ScrollPanel(Vector2d position, float width, float height) {
         super(position, width, height);
@@ -36,48 +49,40 @@ public class ScrollPanel extends FunctionalDelicate<ScrollPanel> {
 
     public <C extends IDelicate> C addContent(IDelicate delicate, String identifier) {
         C result = super.addChild(delicate, identifier);
-
-        adjustChildPositions(delicate, this.position.x, this.position.y);
-
         calculateScrollBounds();
         return result;
     }
 
-    private void adjustChildPositions(IDelicate parent, double offsetX, double offsetY) {
-        parent.setPosX(parent.getPosX() + offsetX);
-        parent.setPosY(parent.getPosY() + offsetY);
-
-        if (parent instanceof FunctionalDelicate) {
-            FunctionalDelicate<?> fd = (FunctionalDelicate<?>) parent;
-            for (Map<String, IDelicate> components : fd.childDelicates.values()) {
-                for (IDelicate child : components.values()) {
-                    adjustChildPositions(child, offsetX, offsetY);
-                }
-            }
-        }
-    }
-
     private void calculateScrollBounds() {
-        double maxY = 0; // Максимальная нижняя граница среди всех элементов
+        double maxY = 0;
+        double maxX = 0;
 
         for (Map<String, IDelicate> components : childDelicates.values()) {
             for (IDelicate child : components.values()) {
                 double bottom = child.getPosY() + child.getHeight();
-                if (bottom > maxY) {
-                    maxY = bottom;
-                }
+                double right = child.getPosX() + child.getWidth();
+
+                if (bottom > maxY) maxY = bottom;
+                if (right > maxX) maxX = right;
             }
         }
 
-        // Вычитаем высоту самой панели, чтобы получить максимальный скролл
-        maxScroll = Math.max(0, maxY - this.position.y - this.height);
+        // Вертикальные границы
+        maxScrollY = Math.max(0, maxY - this.position.y - this.height);
         scrollBarHeight = this.height * (this.height / Math.max(this.height, maxY - this.position.y));
         scrollBarHeight = Math.max(20, scrollBarHeight);
+
+        // Горизонтальные границы
+        maxScrollX = Math.max(0, maxX - this.position.x - this.width);
+        hScrollBarWidth = this.width * (this.width / Math.max(this.width, maxX - this.position.x));
+        hScrollBarWidth = Math.max(20, hScrollBarWidth);
     }
 
     @Override
     public void onRender() {
-        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft(), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
+        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft(),
+                Minecraft.getMinecraft().displayWidth,
+                Minecraft.getMinecraft().displayHeight);
         float scaleFactor = sr.getScaleFactor();
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
@@ -89,72 +94,124 @@ public class ScrollPanel extends FunctionalDelicate<ScrollPanel> {
         );
 
         GL11.glPushMatrix();
-        // Только вертикальный сдвиг, так как позиции уже корректные
-        GL11.glTranslated(0, -scrollY, 0);
+        GL11.glTranslated(-scrollX, -scrollY, 0); // Теперь сдвигаем и по X и по Y
 
         super.onRender();
 
         GL11.glPopMatrix();
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
-        renderScrollBar();
+        renderScrollBars();
     }
 
-    private void renderScrollBar() {
-        if (maxScroll <= 0) return;
+    private void renderScrollBars() {
+        if (maxScrollY > 0) {
+            scrollBarPosY = this.position.y + (scrollY / maxScrollY) * (this.height - scrollBarHeight);
 
-        scrollBarPosY = this.position.y + (scrollY / maxScroll) * (this.height - scrollBarHeight);
+            GuiUtils.drawRectS( // Фон
+                    this.position.x + this.width - scrollBarWidth + SCROLL_OFFSET_X,
+                    this.position.y,
+                    scrollBarWidth,
+                    this.height,
+                    new Color(50, 50, 50),
+                    0.3f
+            );
 
-        // Фон скроллбара
-        GuiUtils.drawRectS(
-                this.position.x + this.width - scrollBarWidth,
-                this.position.y,
-                scrollBarWidth,
-                this.height,
-                new Color(50, 50, 50),
-                0.3f
-        );
+            Color thumbColorY = scrollBarYHovered ? new Color(180, 180, 180) : new Color(140, 140, 140);
+            GuiUtils.drawRectS( // Ползунок
+                    this.position.x + this.width - scrollBarWidth + SCROLL_OFFSET_X,
+                    scrollBarPosY,
+                    scrollBarWidth,
+                    scrollBarHeight,
+                    thumbColorY,
+                    0.9f
+            );
+        }
 
-        // Ползунок
-        Color thumbColor = scrollBarHovered ? new Color(180, 180, 180) : new Color(140, 140, 140);
-        GuiUtils.drawRectS(
-                this.position.x + this.width - scrollBarWidth,
-                scrollBarPosY,
-                scrollBarWidth,
-                scrollBarHeight,
-                thumbColor,
-                0.9f
-        );
+        // Горизонтальный скроллбар
+        if (maxScrollX > 0) {
+            scrollBarPosX = this.position.x + (scrollX / maxScrollX) * (this.width - hScrollBarWidth);
+
+            GuiUtils.drawRectS( // Фон
+                    this.position.x,
+                    this.position.y + this.height - hScrollBarHeight + SCROLL_OFFSET_Y,
+                    this.width,
+                    hScrollBarHeight,
+                    new Color(50, 50, 50),
+                    0.8f
+            );
+
+            Color thumbColorX = scrollBarXHovered ? new Color(180, 180, 180) : new Color(140, 140, 140);
+            GuiUtils.drawRectS( // Ползунок
+                    scrollBarPosX,
+                    this.position.y + this.height - hScrollBarHeight + SCROLL_OFFSET_Y,
+                    hScrollBarWidth,
+                    hScrollBarHeight,
+                    thumbColorX,
+                    0.9f
+            );
+        }
     }
 
     @Override
     public void handleHover(float mouseX, float mouseY) {
         hovered = isMouseOver(mouseX, mouseY);
-        scrollBarHovered = isMouseOverScrollBar(mouseX, mouseY);
+        scrollBarYHovered = isMouseOverVerticalScrollBar(mouseX, mouseY);
+        scrollBarXHovered = isMouseOverHorizontalScrollBar(mouseX, mouseY);
 
+        // Обработка колесика мыши (только вертикальный скролл)
         int wheel = Mouse.getDWheel();
         if (hovered && wheel != 0) {
             scrollY -= wheel * 0.4;
             clampScroll();
         }
 
+        // Обработка перетаскивания
         if (Mouse.isButtonDown(0)) {
-            if (scrollBarHovered && !isScrolling) {
-                isScrolling = true;
+            if (scrollBarYHovered && !isScrollingY) {
+                isScrollingY = true;
                 lastMouseY = mouseY;
-            } else if (isScrolling) {
-                double deltaY = mouseY - lastMouseY;
-                scrollY += deltaY * (maxScroll / (this.height - scrollBarHeight));
-                lastMouseY = mouseY;
-                clampScroll();
             }
+            else if (scrollBarXHovered && !isScrollingX) {
+                isScrollingX = true;
+                lastMouseX = mouseX;
+            }
+
+            if (isScrollingY) {
+                double deltaY = mouseY - lastMouseY;
+                scrollY += deltaY * (maxScrollY / (this.height - scrollBarHeight));
+                lastMouseY = mouseY;
+            }
+
+            if (isScrollingX) {
+                double deltaX = mouseX - lastMouseX;
+                scrollX += deltaX * (maxScrollX / (this.width - hScrollBarWidth));
+                lastMouseX = mouseX;
+            }
+
+            clampScroll();
         } else {
-            isScrolling = false;
+            isScrollingY = false;
+            isScrollingX = false;
         }
 
-        // Координаты относительно панели (уже учитывают position.x/y)
-        float relativeX = mouseX;
+        // Передача событий дочерним элементам
+        float relativeX = mouseX + (float)scrollX;
         float relativeY = mouseY + (float)scrollY;
+
+        GL11.glPushMatrix();
+        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft(),
+                Minecraft.getMinecraft().displayWidth,
+                Minecraft.getMinecraft().displayHeight);
+        float scaleFactor = sr.getScaleFactor();
+
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GL11.glScissor(
+                (int)(this.position.x * scaleFactor),
+                (int)((sr.getScaledHeight() - (this.position.y + this.height)) * scaleFactor),
+                (int)(this.width * scaleFactor),
+                (int)(this.height * scaleFactor)
+        );
 
         for (Map<String, IDelicate> components : childDelicates.values()) {
             for (IDelicate child : components.values()) {
@@ -167,13 +224,36 @@ public class ScrollPanel extends FunctionalDelicate<ScrollPanel> {
                 }
             }
         }
+        GL11.glPopMatrix();
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+    }
+
+    private boolean isMouseOverVerticalScrollBar(float mouseX, float mouseY) {
+        return maxScrollY > 0 &&
+                mouseX >= this.position.x + this.width - scrollBarWidth + SCROLL_OFFSET_X &&
+                mouseX <= this.position.x + this.width + SCROLL_OFFSET_X &&
+                mouseY >= scrollBarPosY &&
+                mouseY <= scrollBarPosY + scrollBarHeight;
+    }
+
+    private boolean isMouseOverHorizontalScrollBar(float mouseX, float mouseY) {
+        return maxScrollX > 0 &&
+                mouseX >= scrollBarPosX &&
+                mouseX <= scrollBarPosX + hScrollBarWidth &&
+                mouseY >= this.position.y + this.height - hScrollBarHeight + SCROLL_OFFSET_Y &&
+                mouseY <= this.position.y + this.height + SCROLL_OFFSET_Y;
+    }
+
+    private void clampScroll() {
+        scrollY = Math.max(0, Math.min(maxScrollY, scrollY));
+        scrollX = Math.max(0, Math.min(maxScrollX, scrollX));
     }
 
     @Override
     public void handleClick(EClickType type) {
         super.handleClick(type);
 
-        float relativeX = MainScreen.mouseX;
+        float relativeX = MainScreen.mouseX + (float)scrollX;
         float relativeY = MainScreen.mouseY + (float)scrollY;
 
         for (Map<String, IDelicate> components : childDelicates.values()) {
@@ -186,17 +266,6 @@ public class ScrollPanel extends FunctionalDelicate<ScrollPanel> {
                 }
             }
         }
-    }
-
-    private boolean isMouseOverScrollBar(float mouseX, float mouseY) {
-        return mouseX >= this.position.x + this.width - scrollBarWidth &&
-                mouseX <= this.position.x + this.width &&
-                mouseY >= scrollBarPosY &&
-                mouseY <= scrollBarPosY + scrollBarHeight;
-    }
-
-    private void clampScroll() {
-        scrollY = Math.max(0, Math.min(maxScroll, scrollY));
     }
 
     @Override

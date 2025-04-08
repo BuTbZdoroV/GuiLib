@@ -1,11 +1,9 @@
 package butbzdorov.client.gui;
 
-import butbzdorov.client.guiLib.IDelicate;
 import butbzdorov.client.guiLib.delicates.Button;
 import butbzdorov.client.guiLib.delicates.Image;
 import butbzdorov.client.guiLib.delicates.Text;
 import butbzdorov.client.guiLib.delicates.prepared.ImageColor;
-import butbzdorov.client.guiLib.delicates.prepared.SimpleButton;
 import butbzdorov.client.guiLib.functional.EClickType;
 import butbzdorov.client.guiLib.functional.ScrollPanel;
 import butbzdorov.client.guiLib.window.Window;
@@ -16,14 +14,17 @@ import butbzdorov.client.guiLib.utils.SG;
 import butbzdorov.client.guiLib.utils.newCustomNPC.CustomFont;
 import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.gui.GuiSelectWorld;
+import net.minecraft.client.gui.ScaledResolution;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 
 import javax.vecmath.Vector2d;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+
+import static butbzdorov.client.guiLib.functional.EClickType.LEFT_MOUSE_PRESS;
+import static butbzdorov.client.guiLib.functional.EClickType.RIGHT_MOUSE_PRESS;
 
 public class MainMenu extends Window {
 
@@ -38,49 +39,31 @@ public class MainMenu extends Window {
     public void initWindow() {
         clean();
 
-
-        ScrollPanel scrollPanel = new ScrollPanel(new Vector2d(SG.get(400), SG.get(200)), SG.get(600), SG.get(300));
-
+        ScrollPanel scrollPanel = new ScrollPanel(new Vector2d(SG.get(400), SG.get(50)), SG.get(600), SG.get(900));
 
         for (int i = 0; i < 20; i++) { // 20 строк
-            for (int j = 0; j < 3; j++) { // 3 колонки
-                scrollPanel.addContent(new Button(
-                                SG.get(10 + j * 130), // X позиция с учетом колонки (10 + 0*130, 10 + 1*130, 10 + 2*130)
-                                SG.get(10 + i * 60),  // Y позиция с учетом строки
-                                SG.get(120),          // Ширина кнопки (380/3 ≈ 120 с небольшим отступом)
-                                SG.get(50)            // Высота кнопки
-                        )
-                                .addText(("Item " + ((i * 3) + j + 1)), "0") // Нумерация 1-60
-                                .addImage(new ImageColor(
-                                        new Vector2d(SG.get(90), SG.get(5)), // Позиция изображения внутри кнопки
-                                        SG.get(25),                          // Ширина изображения
-                                        SG.get(40),                          // Высота изображения
-                                        Color.blue))
+            for (int j = 0; j < 7; j++) { // 3 колонки
+                scrollPanel.addContent(new Button(SG.get(j * 130), SG.get(i * 60), SG.get(120), SG.get(50))
+                                .addText(("Item " + ((i * 3) + j + 1)), "0")
+                                .addImage(Color.blue)
                                 .onHover(button -> {
+                                    GL11.glPushMatrix();
                                     GuiUtils.drawRectS(
-                                            button.getPosX(),
+                                            button.getPosX() - scrollPanel.getScrollX(),
                                             button.getPosY() - scrollPanel.getScrollY(),
                                             button.getWidth(),
                                             button.getHeight(),
                                             Color.darkGray,
                                             0.7f);
+                                    GL11.glPopMatrix();
                                 })
                                 .onClickMouse(button -> {
                                     if (button.clickType == EClickType.LEFT_MOUSE_CLICK) {
                                         System.out.println("Clicked: " + button.getText("0").getText());
                                     }
                                 }),
-                        "ScrollContent_" + i + "_" + j); // Уникальный идентификатор
+                        "ScrollContent_" + i + "_" + j);
             }
-        }
-
-        for (int j = 1; j < 3; j++) {
-            scrollPanel.addContent(new ImageColor(
-                            new Vector2d(SG.get(10 + j * 130 - 5), SG.get(10)),
-                            SG.get(2),
-                            SG.get(60 * 20),
-                            new Color(100, 100, 100, 150)),
-                    "divider_" + j);
         }
 
         addScrollPanel(scrollPanel);
@@ -137,20 +120,6 @@ public class MainMenu extends Window {
                 .setPlacePosX(button2.getText("Settings").getWidth())
                 .setPlacePosY(button2.getText("Settings").getHeight() / 2 - image1.getHeight() / 2));
 
-        Button button3 = addDelicate(new SimpleButton("Лунтик гей", ResourceCache.getResource("butbzdorov", "gui/mainmenu/button.png"),
-                SG.get(236), SG.get(100), SG.get(343), SG.get(60))
-                .onClickMouse(button -> {
-                    switch (button.clickType) {
-                        case LEFT_MOUSE_PRESS:
-
-                            break;
-                        case RIGHT_MOUSE_PRESS:
-                            button.getText(0).orElse(new Text()).setText("Лунтик гей");
-                            button.addText("pidr", new Vector2d(SG.get(30), SG.get(20)));
-                            break;
-                    }
-                }));
-
 
         image1.setWidth(SG.get(100)).setHeight(SG.get(100));
 
@@ -182,7 +151,7 @@ public class MainMenu extends Window {
 
     @Override
     public void renderWindow(float mouseX, float mouseY, float frametime) {
-        image.setWidth(1920).setHeight(1080);
+        image.setWidth(SG.get(1920)).setHeight(SG.get(1080));
 
         //  image.onRender();
         updateDynamicText();

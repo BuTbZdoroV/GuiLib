@@ -1,6 +1,7 @@
 package butbzdorov.client.guiLib.delicates;
 
 import butbzdorov.client.guiLib.IDelicate;
+import butbzdorov.client.guiLib.delicates.prepared.ImageColor;
 import butbzdorov.client.guiLib.functional.EClickType;
 import butbzdorov.client.guiLib.functional.FunctionalDelicate;
 import butbzdorov.client.guiLib.utils.GuiUtils;
@@ -53,7 +54,7 @@ public class Button extends FunctionalDelicate<Button> {
     }
 
     public Button addText(Text text) {
-        Text newText = new Text(text.getText(), new Vector2d(this.position.x + text.getPosX(), this.position.y + text.getPosY()))
+        Text newText = new Text(text.getText(), new Vector2d(text.getPosX(), text.getPosY()))
                 .setTextColor(text.getColor())
                 .setFont(text.getFont(), text.getFontSize());
         addChild(newText, newText.getText());
@@ -74,28 +75,28 @@ public class Button extends FunctionalDelicate<Button> {
 
 
     public Button addCenteredText(String text, String identifier) {
-        Text newText = new Text(text, new Vector2d(position.x + width / 2, position.y));
+        Text newText = new Text(text, new Vector2d(width / 2, 0));
         newText.setCentrePosX().setCentrePosY();  // Установка центра
         addChild(newText, identifier);  // Добавляем текст с уникальным идентификатором
         return this;
     }
 
     public Button addCenteredText(String text) {
-        Text newText = new Text(text, new Vector2d(position.x + width / 2, position.y + height / 2));
+        Text newText = new Text(text, new Vector2d(width / 2, height / 2));
         newText.setCentrePosX().setCentrePosY();
         addChild(newText, newText.getText());
         return this;
     }
 
     public Button addText(String text, String identifier) {
-        Text newText = new Text(text, new Vector2d(position.x + width / 2, position.y + height / 2));
+        Text newText = new Text(text, new Vector2d( width / 2, height / 2));
         newText.setCentrePosX().setCentrePosY();  // Установка центра
         addChild(newText, identifier);  // Добавляем текст с уникальным идентификатором
         return this;
     }
 
     public Button addText(String stringText, CustomFont font, float fontSize) {
-        Text newText = new Text(stringText, new Vector2d(position.x + width / 2, position.y + height / 2));
+        Text newText = new Text(stringText, new Vector2d(width / 2, height / 2));
         newText.setFont(font, fontSize).setCentrePosX().setCentrePosY();
         addChild(newText, stringText);
         return this;
@@ -107,20 +108,26 @@ public class Button extends FunctionalDelicate<Button> {
         return this;
     }
 
+    public Button addImage(Color color) {
+        ImageColor imageColor = new ImageColor(new Vector2d(0, 0), width, height, color);
+        addChild(imageColor, imageColor.getImageName());
+        return this;
+    }
+
     public Button addImage(ResourceLocation image, String identifier, Vector2d position, float width, float height) {
-        Image newImage = new Image(image ,new Vector2d(this.position.x + position.x, this.position.y + position.y) ,  width, height);
+        Image newImage = new Image(image ,new Vector2d(position.x, position.y) ,  width, height);
         addChild(newImage, identifier);
         return this;
     }
 
     public Button addImage(ResourceLocation image, String identifier) {
-        Image newImage = new Image(image, new Vector2d(this.position.x, this.position.y), width, height);
+        Image newImage = new Image(image, new Vector2d(0, 0), width, height);
         addChild(newImage, identifier);
         return this;
     }
 
     public Button addImage(ResourceLocation image, Vector2d position, float endX, float endY) {
-        Image newImage = new Image(image ,new Vector2d(this.position.x + position.x, this.position.y + position.y), endX, endY);
+        Image newImage = new Image(image ,new Vector2d(position.x, position.y), endX, endY);
         addChild(newImage, newImage.getImageName());
         return this;
     }

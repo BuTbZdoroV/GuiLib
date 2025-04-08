@@ -1,6 +1,5 @@
 package butbzdorov.client.guiLib.delicates;
 
-import butbzdorov.client.guiLib.animation.TextAnimation;
 import butbzdorov.client.guiLib.functional.FunctionalDelicate;
 import butbzdorov.client.guiLib.utils.newCustomNPC.CustomFont;
 import butbzdorov.client.guiLib.utils.newCustomNPC.CustomFontRenderer;
@@ -21,8 +20,6 @@ public class Text extends FunctionalDelicate<Text> {
     private float fontSize = 20;
     private Color color = Color.white;
     private float alpha = 1;
-
-    private final List<TextAnimation> animations = new ArrayList<>();
 
     public Text(String text, CustomFont font) {
         super();
@@ -134,25 +131,7 @@ public class Text extends FunctionalDelicate<Text> {
         this.color = color;
         return this;
     }
-
-
-    public void addAnimation(TextAnimation animation) {
-        animations.add(animation);
-    }
-
-    public void removeAnimation(TextAnimation animation) {
-        animations.remove(animation);
-    }
-
-   /* @Override
-    public void onStartRender(float milliseconds) {
-        for (TextAnimation animation : animations) {
-            animation.update(this, milliseconds);
-        }
-    }*/
-
-
-
+    
     @Override
     public void onRender() {
         CustomFontRenderer.drawStringWithMaxWidth(text, (float) position.x, (float) position.y, -1, font.setSize((int) fontSize), color);

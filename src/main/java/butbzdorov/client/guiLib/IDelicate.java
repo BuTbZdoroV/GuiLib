@@ -18,10 +18,9 @@ public abstract class IDelicate<T extends IDelicate<T>> {
     protected final String id;
 
     protected Vector2d position = new Vector2d();
-    @Getter protected float width;
-    @Getter protected float height;
-
-    @Getter protected int zLevel = 0;
+    protected float width;
+    protected float height;
+    protected int zLevel = 0;
 
     public IWindow window; //TODO Когда нибуд
 

@@ -32,9 +32,13 @@ public abstract class FunctionalDelicate<T extends FunctionalDelicate<T>> extend
 
     // Добавление дочернего компонента
     public <C extends IDelicate> C addChild(IDelicate delicate, String identifier) {
+
+        adjustChildPositions(delicate, this.position.x, this.position.y);
+
         childDelicates
                 .computeIfAbsent(delicate.getClass(), k -> new HashMap<>())
                 .put(identifier, delicate);
+
         return (C) this;
     }
 
@@ -77,8 +81,20 @@ public abstract class FunctionalDelicate<T extends FunctionalDelicate<T>> extend
         GL11.glPopMatrix();
     }
 
+    private void adjustChildPositions(IDelicate parent, double offsetX, double offsetY) {
+        parent.setPosX(parent.getPosX() + offsetX);
+        parent.setPosY(parent.getPosY() + offsetY);
 
-    // Установка обработчика для наведения
+        if (parent instanceof FunctionalDelicate) {
+            FunctionalDelicate<?> fd = (FunctionalDelicate<?>) parent;
+            for (Map<String, IDelicate> components : fd.childDelicates.values()) {
+                for (IDelicate child : components.values()) {
+                    adjustChildPositions(child, offsetX, offsetY);
+                }
+            }
+        }
+    }
+
     public T onHover(Consumer<T> action) {
         onHoverHandler = action;
         return (T) this;
